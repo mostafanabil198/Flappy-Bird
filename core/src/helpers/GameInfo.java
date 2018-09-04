@@ -6,8 +6,9 @@ public class GameInfo {
     public static final float PPM = 100f;
     public static final short BIRD = 2;
     public static final short PIPE = 6;
-    public static final short GROUND = 4;
+    public static final short GROUND = 6;
     public static final short SCORE = 8;
     public static final short SKY = 9;
-
+    public static final short COLLECTABLES = 4;
+    public static final short DESTROYED = 3;
 }

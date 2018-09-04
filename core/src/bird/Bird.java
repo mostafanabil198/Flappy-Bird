@@ -27,6 +27,7 @@ public class Bird extends Sprite {
     private TextureAtlas birdAtlas;
     private Animation<TextureRegion> animation;
     private float elapsedTime;
+    private boolean hasSpeed;
 
     public Bird(World world, float x, float y) {
         super(new Texture("Birds/" + GameManager.getInstance().getBird() + "/IdleS.png"));
@@ -49,7 +50,7 @@ public class Bird extends Sprite {
         fixtureDef.shape = shape;
         fixtureDef.density = 1;
         fixtureDef.filter.categoryBits = GameInfo.BIRD;
-        fixtureDef.filter.maskBits = GameInfo.GROUND | GameInfo.PIPE | GameInfo.SCORE;
+        fixtureDef.filter.maskBits =  GameInfo.SCORE | GameInfo.COLLECTABLES;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData("Bird");
         shape.dispose();
@@ -102,5 +103,13 @@ public class Bird extends Sprite {
             elapsedTime += Gdx.graphics.getDeltaTime();
             batch.draw(animation.getKeyFrame(elapsedTime, true), getX() - getWidth() / 2f, getY() - getHeight() / 2f);
         }
+    }
+
+    public boolean isHasSpeed() {
+        return hasSpeed;
+    }
+
+    public void setHasSpeed(boolean hasSpeed) {
+        this.hasSpeed = hasSpeed;
     }
 }

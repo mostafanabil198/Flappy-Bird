@@ -2,6 +2,8 @@ package helpers;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.Json;
 
@@ -14,6 +16,7 @@ public class GameManager {
     private GameData gameData;
     private Json json = new Json();
     private FileHandle fileHandle = Gdx.files.local("bin/gameData.json");
+    public Array<Sprite> collectables = new Array<Sprite>();
 
     public Boolean getCanRevive() {
         return canRevive;
@@ -32,11 +35,21 @@ public class GameManager {
         if (!fileHandle.exists()) {
             gameData = new GameData();
             gameData.setHighScore(0);
-            gameData.setPoints(0);
+            gameData.setCoins(0);
             saveData();
         } else {
             loadData();
         }
+    }
+
+    public void addCoins(int num) {
+        gameData.setCoins(gameData.getCoins() + num);
+        saveData();
+    }
+
+    public void reviveCoin(int num) {
+        gameData.setCoins(gameData.getCoins() - num);
+        saveData();
     }
 
     private void loadData() {
@@ -75,7 +88,13 @@ public class GameManager {
 
     }
 
+    public int getTotalCoins() {
+        return gameData.getCoins();
+    }
+
     public static GameManager getInstance() {
         return ourInstance;
     }
+
+    
 }

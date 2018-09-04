@@ -27,7 +27,10 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yalla.flappy.GameMain;
 
+import java.util.Random;
+
 import bird.Bird;
+import collectables.Collectables;
 import ground.GroundBody;
 import helpers.GameInfo;
 import helpers.GameManager;
@@ -47,16 +50,12 @@ public class GamePlay implements Screen, ContactListener {
     private GroundBody groundBody;
     private Array<Pipes> pipesArray = new Array<Pipes>();
     private int distanceBetweenPipes = 180;
-
-    public UiHud getHud() {
-        return hud;
-    }
-
     private UiHud hud;
-    private float time = 1.5f;
+    public  float time = 1.5f;
     private boolean firstTouch;
     private Sound scoreSound, dieSound, flyingSound;
     private Texture tapToPlay;
+    private Array<Collectables> collectables;
 
 
     public GamePlay(GameMain game) {
@@ -79,6 +78,8 @@ public class GamePlay implements Screen, ContactListener {
         scoreSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Score.mp3"));
         dieSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Dead.mp3"));
         tapToPlay = new Texture("Buttons/Touch To Start.png");
+        collectables = new Array<Collectables>();
+
     }
 
     void inputHandle() {
@@ -172,6 +173,7 @@ public class GamePlay implements Screen, ContactListener {
         }
     }
 
+
     void checkFirstTouch() {
         if (!firstTouch) {
             if (Gdx.input.justTouched()) {
@@ -204,6 +206,7 @@ public class GamePlay implements Screen, ContactListener {
         stopPipes();
 //Score
         GameManager.getInstance().checkForNewHighScore();
+        GameManager.getInstance().addCoins(hud.getCoins());
         hud.getStage().clear();
         hud.showScore();
 
@@ -211,7 +214,7 @@ public class GamePlay implements Screen, ContactListener {
     }
 
     private void createPipes() {
-        Pipes pipe = new Pipes(world, GameInfo.WIDTH + distanceBetweenPipes, mainCamera);
+        Pipes pipe = new Pipes(world, GameInfo.WIDTH + distanceBetweenPipes, mainCamera, game);
         pipesArray.add(pipe);
     }
 
@@ -220,7 +223,6 @@ public class GamePlay implements Screen, ContactListener {
 
     }
 
-    int i = 1;
 
     @Override
     public void render(float delta) {
@@ -230,10 +232,10 @@ public class GamePlay implements Screen, ContactListener {
         game.getBatch().begin();
         drawBackgrounds(game.getBatch());
         drawGrounds(game.getBatch());
-        if(!firstTouch){
-            game.getBatch().draw(tapToPlay,GameInfo.WIDTH/3 - 28, GameInfo.HEIGHT/2 - 133);
+        if (!firstTouch) {
+            game.getBatch().draw(tapToPlay, GameInfo.WIDTH / 3 - 28, GameInfo.HEIGHT / 2 - 133);
         }
-        if(firstTouch) {
+        if (firstTouch) {
             bird.drawBirdIdle(game.getBatch());
         }
         bird.animateBird(game.getBatch());
@@ -308,6 +310,16 @@ public class GamePlay implements Screen, ContactListener {
             scoreSound.play();
 
         }
+        if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Coin" && bird.isAlive()) {
+            fix2.setUserData("Remove");
+            hud.incrementCoins();
+
+        }
+        if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Speed" && bird.isAlive()) {
+            fix2.setUserData("Remove");
+            bird.setHasSpeed(true);
+
+        }
     }
 
     @Override
@@ -323,5 +335,9 @@ public class GamePlay implements Screen, ContactListener {
     @Override
     public void postSolve(Contact contact, ContactImpulse impulse) {
 
+    }
+
+    public UiHud getHud() {
+        return hud;
     }
 }

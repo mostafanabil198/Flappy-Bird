@@ -9,14 +9,14 @@ public class GameData {
         this.highScore = highScore;
     }
 
-    public int getPoints() {
-        return points;
+    public int getCoins() {
+        return coins;
     }
 
-    public void setPoints(int points) {
-        this.points = points;
+    public void setCoins(int coins) {
+        this.coins = coins;
     }
 
     private int highScore;
-    private int points;
+    private int coins;
 }

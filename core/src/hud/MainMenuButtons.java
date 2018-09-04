@@ -29,8 +29,8 @@ public class MainMenuButtons {
     private GameMain game;
     private Stage stage;
     private Viewport gameViewport;
-    private ImageButton playBtn, highScoreBtn, changeBirdBtn, levelBtn, rankBtn, settingsBtn, marketBtn;
-    private Label scoreLbl;
+    private ImageButton playBtn, highScoreBtn, changeBirdBtn, levelBtn, rankBtn, settingsBtn, marketBtn, coinsBtn;
+    private Label coinsLbl;
     private Image crown;
 
 
@@ -39,6 +39,7 @@ public class MainMenuButtons {
         gameViewport = new FitViewport(GameInfo.WIDTH, GameInfo.HEIGHT, new OrthographicCamera());
         stage = new Stage(gameViewport, game.getBatch());
         createAndPositionBtns();
+        createCoinsLbl();
         changeBird();
 
     }
@@ -50,11 +51,10 @@ public class MainMenuButtons {
         rankBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Rank.png"))));
         settingsBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Settings.png"))));
         marketBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Market.png"))));
-
-        playBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f + 90, Align.center);
-        levelBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f - 25, Align.center);
-        highScoreBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f - 140, Align.center);
-        rankBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f - 255, Align.center);
+        playBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f + 65, Align.center);
+        levelBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f - 50, Align.center);
+        highScoreBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f - 165, Align.center);
+        rankBtn.setPosition(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f - 280, Align.center);
         marketBtn.setPosition(40, GameInfo.HEIGHT - 50, Align.center);
         settingsBtn.setPosition(GameInfo.WIDTH - 50, GameInfo.HEIGHT - 50, Align.center);
 
@@ -83,12 +83,28 @@ public class MainMenuButtons {
         stage.addActor(marketBtn);
     }
 
+    void createCoinsLbl() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Flappy Bird Font/04b_19.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 30;
+        parameter.shadowColor = Color.GRAY;
+        parameter.shadowOffsetX = 1;
+        parameter.shadowOffsetY = 1;
+        BitmapFont font = generator.generateFont(parameter);
+        coinsLbl = new Label(String.valueOf(GameManager.getInstance().getTotalCoins()), new Label.LabelStyle(font, Color.WHITE));
+        coinsLbl.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT  - 157);
+        coinsBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Show Coins.png"))));
+        coinsBtn.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT - 140, Align.center);
+        stage.addActor(coinsBtn);
+        stage.addActor(coinsLbl);
+    }
+
     void changeBird() {
         if (changeBirdBtn != null) {
             changeBirdBtn.remove();
         }
         changeBirdBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Birds/" + GameManager.getInstance().getBird() + "/Idle.png"))));
-        changeBirdBtn.setPosition(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2 + 250, Align.center);
+        changeBirdBtn.setPosition(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2 + 210, Align.center);
         changeBirdBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {

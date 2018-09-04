@@ -26,6 +26,7 @@ import com.yalla.flappy.GameMain;
 
 import helpers.GameInfo;
 import helpers.GameManager;
+import pipes.Pipes;
 import scenes.GamePlay;
 import scenes.MainMenu;
 
@@ -33,9 +34,9 @@ public class UiHud {
     private Stage stage;
     private GameMain game;
     private Viewport gameViewPort;
-    private Label scoreLbl, highScoreLbl;
+    private Label scoreLbl, highScoreLbl, coinLbl;
     private ImageButton retryBtn, menuBtn, reviveBtn;
-    private Image gameover, crown;
+    private Image gameover, crown, coinImg;
 
     public int getScore() {
         return score;
@@ -47,6 +48,15 @@ public class UiHud {
 
     private int score;
 
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    private int coins;
 
     public UiHud(GameMain game) {
         this.game = game;
@@ -54,6 +64,8 @@ public class UiHud {
         stage = new Stage(gameViewPort, game.getBatch());
         createLable();
         stage.addActor(scoreLbl);
+        stage.addActor(coinLbl);
+        stage.addActor(coinImg);
     }
 
     private void createLable() {
@@ -66,6 +78,13 @@ public class UiHud {
         BitmapFont font = generator.generateFont(parameter);
         scoreLbl = new Label(String.valueOf(score), new Label.LabelStyle(font, Color.WHITE));
         scoreLbl.setPosition(GameInfo.WIDTH / 2 - 20, GameInfo.HEIGHT / 2 + 250);
+        parameter.size = 30;
+        font = generator.generateFont(parameter);
+        coinLbl = new Label(String.valueOf(coins), new Label.LabelStyle(font, Color.WHITE));
+        coinLbl.setPosition(50, GameInfo.HEIGHT / 2 + 250);
+        coinImg = new Image(new Texture("Collectables/Coin.png"));
+        coinImg.setPosition(12, GameInfo.HEIGHT / 2 + 250);
+        coinImg.setSize(coinImg.getWidth() / 2, coinImg.getHeight() / 2);
 
     }
 
@@ -90,6 +109,11 @@ public class UiHud {
     public void incrementScore() {
         score++;
         scoreLbl.setText(String.valueOf(score));
+    }
+
+    public void incrementCoins() {
+        coins++;
+        coinLbl.setText(String.valueOf(coins));
     }
 
     public void showScore() {
@@ -130,7 +154,6 @@ public class UiHud {
 
     }
 
-
     public void createButtons() {
         retryBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Again.png"))));
         menuBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Menu.png"))));
@@ -170,6 +193,9 @@ public class UiHud {
                 stage.dispose();
                 g.getHud().setScore(--score);
                 g.getHud().incrementScore();
+                GameManager.getInstance().reviveCoin(coins);
+                g.getHud().setCoins(--coins);
+                g.getHud().incrementCoins();
                 GameManager.getInstance().setCanRevive(false);
             }
         });
@@ -177,4 +203,9 @@ public class UiHud {
         stage.addActor(retryBtn);
         stage.addActor(menuBtn);
     }
+
 }
+
+
+
+
