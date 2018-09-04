@@ -108,4 +108,9 @@ public class Pipes {
     public void setSpeed(float speed) {
         this.speed = speed;
     }
+
+    public void dispose() {
+        pipe1.getTexture().dispose();
+        pipe2.getTexture().dispose();
+    }
 }

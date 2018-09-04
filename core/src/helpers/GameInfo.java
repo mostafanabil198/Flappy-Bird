@@ -8,5 +8,6 @@ public class GameInfo {
     public static final short PIPE = 6;
     public static final short GROUND = 4;
     public static final short SCORE = 8;
+    public static final short SKY = 9;
 
 }

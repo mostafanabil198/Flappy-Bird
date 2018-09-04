@@ -1,9 +1,13 @@
 package bird;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
@@ -12,19 +16,25 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 
 import helpers.GameInfo;
+import helpers.GameManager;
 
 public class Bird extends Sprite {
 
     private World world;
     private Body body;
     private boolean isAlive;
+    private Texture birdDead;
+    private TextureAtlas birdAtlas;
+    private Animation<TextureRegion> animation;
+    private float elapsedTime;
 
     public Bird(World world, float x, float y) {
-        super(new Texture("Birds/Blue/Idle.png"));
+        super(new Texture("Birds/" + GameManager.getInstance().getBird() + "/IdleS.png"));
+        birdDead = new Texture("Birds/" + GameManager.getInstance().getBird() + "/Dead.png");
         setPosition(x, y);
         this.world = world;
         createBody();
-
+        createAnimation();
     }
 
     void createBody() {
@@ -52,7 +62,9 @@ public class Bird extends Sprite {
     }
 
     public void drawBirdIdle(SpriteBatch batch) {
-        batch.draw(this, getX() - getWidth() / 2f, getY() - getHeight() / 2f);
+        if (!isAlive) {
+            batch.draw(this, getX() - getWidth() / 2f, getY() - getHeight() / 2f);
+        }
     }
 
     public void updateBird() {
@@ -74,5 +86,21 @@ public class Bird extends Sprite {
     public void activateBird() {
         isAlive = true;
         body.setActive(true);
+    }
+
+    public void birdDied() {
+        this.setTexture(birdDead);
+    }
+
+    public void createAnimation() {
+        birdAtlas = new TextureAtlas("Birds/" + GameManager.getInstance().getBird() + "/" + GameManager.getInstance().getBird() + " Bird.atlas");
+        animation = new Animation(1f / 7f, birdAtlas.getRegions());
+    }
+
+    public void animateBird(SpriteBatch batch) {
+        if (isAlive) {
+            elapsedTime += Gdx.graphics.getDeltaTime();
+            batch.draw(animation.getKeyFrame(elapsedTime, true), getX() - getWidth() / 2f, getY() - getHeight() / 2f);
+        }
     }
 }

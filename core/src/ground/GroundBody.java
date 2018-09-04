@@ -20,6 +20,7 @@ public class GroundBody {
     public GroundBody(World world, Sprite ground) {
         this.world = world;
         createGroundBody(ground);
+        createSkyBody();
     }
 
     public void createGroundBody(Sprite ground) {
@@ -35,6 +36,23 @@ public class GroundBody {
         fixtureDef.filter.categoryBits = GameInfo.GROUND;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData("Ground");
+        shape.dispose();
+
+    }
+
+    void createSkyBody() {
+        BodyDef bodyDef = new BodyDef();
+        bodyDef.type = BodyDef.BodyType.StaticBody;
+        bodyDef.position.set(0, GameInfo.HEIGHT / GameInfo.PPM);
+        body = world.createBody(bodyDef);
+        PolygonShape shape = new PolygonShape();
+        shape.setAsBox(GameInfo.WIDTH / GameInfo.PPM, 1 / GameInfo.PPM);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.density = 4;
+        fixtureDef.shape = shape;
+        fixtureDef.filter.categoryBits = GameInfo.SKY;
+        Fixture fixture = body.createFixture(fixtureDef);
+        fixture.setUserData("Sky");
         shape.dispose();
 
     }
