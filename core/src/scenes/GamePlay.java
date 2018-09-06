@@ -51,15 +51,23 @@ public class GamePlay implements Screen, ContactListener {
     private Array<Pipes> pipesArray = new Array<Pipes>();
     private int distanceBetweenPipes = 180;
     private UiHud hud;
-    public  float time = 1.5f;
+    public float time = 1.5f;
     private boolean firstTouch;
     private Sound scoreSound, dieSound, flyingSound;
     private Texture tapToPlay;
     private Array<Collectables> collectables;
+    private int targetScore;
+    private int winCoins;
+    private boolean isLevel;
+    private int currentLevel;
 
 
-    public GamePlay(GameMain game) {
+    public GamePlay(GameMain game, boolean isLevel, int currentlevel, int targetScore, int winCoins) {
         this.game = game;
+        this.targetScore = targetScore;
+        this.winCoins = winCoins;
+        this.isLevel = isLevel;
+        this.currentLevel = currentlevel;
         mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
         mainCamera.position.set(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2, 0);
         gameViewPort = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT, mainCamera);
@@ -73,7 +81,7 @@ public class GamePlay implements Screen, ContactListener {
         world.setContactListener(this);
         bird = new Bird(world, GameInfo.WIDTH / 2f - 80, GameInfo.HEIGHT / 2f);
         groundBody = new GroundBody(world, grounds.get(0));
-        hud = new UiHud(game);
+        hud = new UiHud(game, this);
         flyingSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Fly.mp3"));
         scoreSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Score.mp3"));
         dieSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Dead.mp3"));
@@ -213,8 +221,22 @@ public class GamePlay implements Screen, ContactListener {
         Gdx.input.setInputProcessor(hud.getStage());
     }
 
+    void finishLevel() {
+        // Winning sound <<-------------------------->>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+        bird.setAlive(false);
+        stopPipes();
+        //Open new level
+        if (GameManager.getInstance().getGameData().getUserCurrentLevel() == currentLevel && currentLevel < GameManager.getInstance().getGameData().getTotalShownLevels()) {
+            GameManager.getInstance().getGameData().setUserCurrentLevel(GameManager.getInstance().getGameData().getUserCurrentLevel() + 1);
+            GameManager.getInstance().addCoins(winCoins);
+        }
+        hud.getStage().clear();
+        hud.winLevel();
+        Gdx.input.setInputProcessor(hud.getStage());
+    }
+
     private void createPipes() {
-        Pipes pipe = new Pipes(world, GameInfo.WIDTH + distanceBetweenPipes, mainCamera, game);
+        Pipes pipe = new Pipes(world, GameInfo.WIDTH + distanceBetweenPipes, mainCamera, game, this);
         pipesArray.add(pipe);
     }
 
@@ -245,6 +267,7 @@ public class GamePlay implements Screen, ContactListener {
         game.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
         hud.getStage().act();
         hud.getStage().draw();
+
         bird.updateBird();
         world.step(Gdx.graphics.getDeltaTime(), 6, 2);
 
@@ -308,6 +331,9 @@ public class GamePlay implements Screen, ContactListener {
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Score" && bird.isAlive()) {
             hud.incrementScore();
             scoreSound.play();
+            if (isLevel && hud.getScore() == targetScore) {
+                finishLevel();
+            }
 
         }
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Coin" && bird.isAlive()) {
@@ -339,5 +365,25 @@ public class GamePlay implements Screen, ContactListener {
 
     public UiHud getHud() {
         return hud;
+    }
+
+    public int getTargetScore() {
+        return targetScore;
+    }
+
+    public int getWinCoins() {
+        return winCoins;
+    }
+
+    public boolean isLevel() {
+        return isLevel;
+    }
+
+    public int getCurrentLevel() {
+        return currentLevel;
+    }
+
+    public void setCurrentLevel(int currentLevel) {
+        this.currentLevel = currentLevel;
     }
 }

@@ -18,6 +18,7 @@ import java.util.Random;
 import collectables.Collectables;
 import helpers.GameInfo;
 import helpers.GameManager;
+import scenes.GamePlay;
 
 public class Pipes {
 
@@ -27,14 +28,16 @@ public class Pipes {
     private final float DISTANCE_BETWEEN_PIPES = 395f;
     private Random rand = new Random();
     private OrthographicCamera camera;
-    public  float speed = -2.5f;
+    public float speed = -2.5f;
     private GameMain game;
     private String colName = "";
     public Fixture fixture4, fixture2, fixture1;
     public static int numCoins = 0, numSpeed = 0;
+    private GamePlay gamePlay;
 
-    public Pipes(World world, float x, OrthographicCamera camera, GameMain game) {
+    public Pipes(World world, float x, OrthographicCamera camera, GameMain game, GamePlay gamePlay) {
         this.game = game;
+        this.gamePlay = gamePlay;
         this.world = world;
         this.camera = camera;
         createPipes(x, getRandomY());
@@ -107,6 +110,10 @@ public class Pipes {
         } else if (((r > 1 && r < 7) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97)) && numCoins < 30) {
             colName = "Coin";
         } else {
+            colName = "";
+        }
+
+        if (gamePlay.isLevel()) {
             colName = "";
         }
     }

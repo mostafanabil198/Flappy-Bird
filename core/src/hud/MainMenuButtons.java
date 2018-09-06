@@ -23,6 +23,7 @@ import helpers.GameInfo;
 import helpers.GameManager;
 import scenes.GamePlay;
 import scenes.HighScore;
+import scenes.Levels;
 
 public class MainMenuButtons {
 
@@ -62,7 +63,7 @@ public class MainMenuButtons {
         playBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new GamePlay(game));
+                game.setScreen(new GamePlay(game, false, 0, 0, 0));
                 stage.dispose();
                 GameManager.getInstance().setCanRevive(true);
             }
@@ -72,6 +73,14 @@ public class MainMenuButtons {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.setScreen(new HighScore(game));
+                stage.dispose();
+            }
+        });
+
+        levelBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new Levels(game));
                 stage.dispose();
             }
         });
@@ -92,7 +101,7 @@ public class MainMenuButtons {
         parameter.shadowOffsetY = 1;
         BitmapFont font = generator.generateFont(parameter);
         coinsLbl = new Label(String.valueOf(GameManager.getInstance().getTotalCoins()), new Label.LabelStyle(font, Color.WHITE));
-        coinsLbl.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT  - 157);
+        coinsLbl.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT - 157);
         coinsBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Show Coins.png"))));
         coinsBtn.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT - 140, Align.center);
         stage.addActor(coinsBtn);

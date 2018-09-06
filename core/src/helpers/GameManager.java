@@ -17,15 +17,6 @@ public class GameManager {
     private Json json = new Json();
     private FileHandle fileHandle = Gdx.files.local("bin/gameData.json");
     public Array<Sprite> collectables = new Array<Sprite>();
-
-    public Boolean getCanRevive() {
-        return canRevive;
-    }
-
-    public void setCanRevive(Boolean canRevive) {
-        this.canRevive = canRevive;
-    }
-
     private Boolean canRevive;
 
     private GameManager() {
@@ -36,20 +27,11 @@ public class GameManager {
             gameData = new GameData();
             gameData.setHighScore(0);
             gameData.setCoins(0);
+            gameData.setUserCurrentLevel(1);
             saveData();
         } else {
             loadData();
         }
-    }
-
-    public void addCoins(int num) {
-        gameData.setCoins(gameData.getCoins() + num);
-        saveData();
-    }
-
-    public void reviveCoin(int num) {
-        gameData.setCoins(gameData.getCoins() - num);
-        saveData();
     }
 
     private void loadData() {
@@ -62,6 +44,19 @@ public class GameManager {
         }
     }
 
+
+
+    public void addCoins(int num) {
+        gameData.setCoins(gameData.getCoins() + num);
+        saveData();
+    }
+
+    public void reviveCoin(int num) {
+        gameData.setCoins(gameData.getCoins() - num);
+        saveData();
+    }
+
+
     public void checkForNewHighScore() {
         int oldHighScore = gameData.getHighScore();
 
@@ -72,13 +67,6 @@ public class GameManager {
 
     }
 
-    public int getHighScore() {
-        return gameData.getHighScore();
-    }
-
-    public String getBird() {
-        return birds[birdIndex];
-    }
 
     public void incrementIndex() {
         birdIndex++;
@@ -92,9 +80,33 @@ public class GameManager {
         return gameData.getCoins();
     }
 
+
+    public GameData getGameData() {
+        return gameData;
+    }
+
+    public int getHighScore() {
+        return gameData.getHighScore();
+    }
+
+    public String getBird() {
+        return birds[birdIndex];
+    }
+
+
+    public Boolean getCanRevive() {
+        return canRevive;
+    }
+
+    public void setCanRevive(Boolean canRevive) {
+        this.canRevive = canRevive;
+    }
+
+
+
     public static GameManager getInstance() {
         return ourInstance;
     }
 
-    
+
 }

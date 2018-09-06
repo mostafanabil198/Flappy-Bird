@@ -28,6 +28,7 @@ import helpers.GameInfo;
 import helpers.GameManager;
 import pipes.Pipes;
 import scenes.GamePlay;
+import scenes.Levels;
 import scenes.MainMenu;
 
 public class UiHud {
@@ -35,7 +36,7 @@ public class UiHud {
     private GameMain game;
     private Viewport gameViewPort;
     private Label scoreLbl, highScoreLbl, coinLbl;
-    private ImageButton retryBtn, menuBtn, reviveBtn;
+    private ImageButton retryBtn, menuBtn, reviveBtn, backToLevelsBtn, nextLevelBtn;
     private Image gameover, crown, coinImg;
 
     public int getScore() {
@@ -57,9 +58,11 @@ public class UiHud {
     }
 
     private int coins;
+    private GamePlay gamePlay;
 
-    public UiHud(GameMain game) {
+    public UiHud(GameMain game, GamePlay gamePlay) {
         this.game = game;
+        this.gamePlay = gamePlay;
         gameViewPort = new FitViewport(GameInfo.WIDTH, GameInfo.HEIGHT, new OrthographicCamera());
         stage = new Stage(gameViewPort, game.getBatch());
         createLable();
@@ -76,8 +79,16 @@ public class UiHud {
         parameter.shadowOffsetX = 1;
         parameter.shadowOffsetY = 1;
         BitmapFont font = generator.generateFont(parameter);
-        scoreLbl = new Label(String.valueOf(score), new Label.LabelStyle(font, Color.WHITE));
-        scoreLbl.setPosition(GameInfo.WIDTH / 2 - 20, GameInfo.HEIGHT / 2 + 250);
+        if (gamePlay.isLevel()) {
+            parameter.size = 50;
+            font = generator.generateFont(parameter);
+            scoreLbl = new Label(String.valueOf(score) + "/" + String.valueOf(gamePlay.getTargetScore()), new Label.LabelStyle(font, Color.WHITE));
+            scoreLbl.setPosition(GameInfo.WIDTH / 2 - 50, GameInfo.HEIGHT / 2 + 285);
+        } else {
+            scoreLbl = new Label(String.valueOf(score), new Label.LabelStyle(font, Color.WHITE));
+            scoreLbl.setPosition(GameInfo.WIDTH / 2 - 20, GameInfo.HEIGHT / 2 + 250);
+        }
+
         parameter.size = 30;
         font = generator.generateFont(parameter);
         coinLbl = new Label(String.valueOf(coins), new Label.LabelStyle(font, Color.WHITE));
@@ -108,7 +119,11 @@ public class UiHud {
 
     public void incrementScore() {
         score++;
-        scoreLbl.setText(String.valueOf(score));
+        if (gamePlay.isLevel()) {
+            scoreLbl.setText(String.valueOf(score) + "/" + String.valueOf(gamePlay.getTargetScore()));
+        } else {
+            scoreLbl.setText(String.valueOf(score));
+        }
     }
 
     public void incrementCoins() {
@@ -135,11 +150,17 @@ public class UiHud {
             @Override
             public void run() {
                 createButtons();
-                scoreLbl.setText(String.valueOf(score));
+                if (gamePlay.isLevel()) {
+                    scoreLbl.setText(String.valueOf(score) + "/" + String.valueOf(gamePlay.getTargetScore()));
+                } else {
+                    scoreLbl.setText(String.valueOf(score));
+                }
                 stage.addActor(scoreLbl);
                 createHighScoreLbl();
-                stage.addActor(highScoreLbl);
-                stage.addActor(crown);
+                if(!gamePlay.isLevel()) {
+                    stage.addActor(highScoreLbl);
+                    stage.addActor(crown);
+                }
             }
         });
         SequenceAction sa = new SequenceAction();
@@ -153,6 +174,73 @@ public class UiHud {
         stage.addAction(sa);
 
     }
+
+
+    public void winLevel() {
+        if (gameover != null) {
+            gameover.clear();
+        }
+        gameover = new Image(new Texture("Buttons/LevelCompleted.png"));
+        final RunnableAction gameoverAction = new RunnableAction();
+        gameoverAction.setRunnable(new Runnable() {
+            @Override
+            public void run() {
+                gameover.setPosition(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2 + 110, Align.center);
+                stage.addActor(gameover);
+            }
+        });
+
+        RunnableAction btns = new RunnableAction();
+        btns.setRunnable(new Runnable() {
+            @Override
+            public void run() {
+                createWinLevelButtons();
+                scoreLbl.setText(String.valueOf(score) + "/" + String.valueOf(gamePlay.getTargetScore()));
+                stage.addActor(scoreLbl);
+                //createHighScoreLbl();
+                //stage.addActor(highScoreLbl);
+                //stage.addActor(crown);
+            }
+        });
+        SequenceAction sa = new SequenceAction();
+        sa.addAction(Actions.fadeOut(.5f));
+        sa.addAction(Actions.delay(.5f));
+        sa.addAction(Actions.fadeIn(.5f));
+        sa.addAction(gameoverAction);
+        sa.addAction(Actions.delay(.5f));
+        //sa.addAction(Actions.delay(.5f));
+        sa.addAction(btns);
+        stage.addAction(sa);
+
+    }
+
+    private void createWinLevelButtons() {
+        backToLevelsBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/LevelsSmall.png"))));
+        nextLevelBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/NextLevel.png"))));
+        backToLevelsBtn.setPosition(GameInfo.WIDTH / 2 - 100, GameInfo.HEIGHT / 2 - 60, Align.center);
+        nextLevelBtn.setPosition(GameInfo.WIDTH / 2 + 100, GameInfo.HEIGHT / 2 - 60, Align.center);
+
+        nextLevelBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new GamePlay(game, true, gamePlay.getCurrentLevel() + 1, GameManager.getInstance().getGameData().getLevelsScores()[gamePlay.getCurrentLevel()], GameManager.getInstance().getGameData().getLevelsCoins()[gamePlay.getCurrentLevel()]));
+                stage.dispose();
+            }
+        });
+
+        backToLevelsBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new Levels(game));
+                stage.dispose();
+                GameManager.getInstance().setCanRevive(true);
+            }
+        });
+
+        stage.addActor(backToLevelsBtn);
+        stage.addActor(nextLevelBtn);
+    }
+
 
     public void createButtons() {
         retryBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Again.png"))));
@@ -170,7 +258,7 @@ public class UiHud {
         retryBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                game.setScreen(new GamePlay(game));
+                game.setScreen(new GamePlay(game, gamePlay.isLevel(), gamePlay.getCurrentLevel(), gamePlay.getTargetScore(), gamePlay.getWinCoins()));
                 stage.dispose();
                 GameManager.getInstance().setCanRevive(true);
             }
@@ -188,7 +276,7 @@ public class UiHud {
         reviveBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                GamePlay g = new GamePlay(game);
+                GamePlay g = new GamePlay(game, gamePlay.isLevel(), gamePlay.getCurrentLevel(), gamePlay.getTargetScore(), gamePlay.getWinCoins());
                 game.setScreen(g);
                 stage.dispose();
                 g.getHud().setScore(--score);
