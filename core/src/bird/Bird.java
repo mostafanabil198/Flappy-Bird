@@ -1,6 +1,5 @@
 package bird;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Animation;
@@ -27,6 +26,7 @@ public class Bird extends Sprite {
     private TextureAtlas birdAtlas;
     private Animation<TextureRegion> animation;
     private float elapsedTime;
+    private boolean hasInvisible;
     private boolean hasSpeed;
 
     public Bird(World world, float x, float y) {
@@ -35,7 +35,7 @@ public class Bird extends Sprite {
         setPosition(x, y);
         this.world = world;
         createBody();
-        createAnimation();
+        createAnimation("");
     }
 
     void createBody() {
@@ -50,7 +50,7 @@ public class Bird extends Sprite {
         fixtureDef.shape = shape;
         fixtureDef.density = 1;
         fixtureDef.filter.categoryBits = GameInfo.BIRD;
-        fixtureDef.filter.maskBits =  GameInfo.SCORE | GameInfo.COLLECTABLES;
+        fixtureDef.filter.maskBits = GameInfo.SCORE | GameInfo.COLLECTABLES;
         Fixture fixture = body.createFixture(fixtureDef);
         fixture.setUserData("Bird");
         shape.dispose();
@@ -93,8 +93,8 @@ public class Bird extends Sprite {
         this.setTexture(birdDead);
     }
 
-    public void createAnimation() {
-        birdAtlas = new TextureAtlas("Birds/" + GameManager.getInstance().getBird() + "/" + GameManager.getInstance().getBird() + " Bird.atlas");
+    public void createAnimation(String inv) {
+        birdAtlas = new TextureAtlas("Birds/" + GameManager.getInstance().getBird() + "/" + GameManager.getInstance().getBird() + " Bird" + inv + ".atlas");
         animation = new Animation(1f / 7f, birdAtlas.getRegions());
     }
 
@@ -105,6 +105,15 @@ public class Bird extends Sprite {
         }
     }
 
+    public boolean isHasInvisible() {
+        return hasInvisible;
+    }
+
+    public void setHasInvisible(boolean hasInvisible) {
+        this.hasInvisible = hasInvisible;
+    }
+
+
     public boolean isHasSpeed() {
         return hasSpeed;
     }
@@ -112,4 +121,6 @@ public class Bird extends Sprite {
     public void setHasSpeed(boolean hasSpeed) {
         this.hasSpeed = hasSpeed;
     }
+
+
 }

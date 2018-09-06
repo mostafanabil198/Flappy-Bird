@@ -18,6 +18,8 @@ public class GameManager {
     private FileHandle fileHandle = Gdx.files.local("bin/gameData.json");
     public Array<Sprite> collectables = new Array<Sprite>();
     private Boolean canRevive;
+    private boolean isInvisible = false;
+    private boolean isSpeed = false;
 
     private GameManager() {
     }
@@ -43,7 +45,6 @@ public class GameManager {
             fileHandle.writeString(Base64Coder.encodeString(json.prettyPrint(gameData)), false);
         }
     }
-
 
 
     public void addCoins(int num) {
@@ -102,6 +103,22 @@ public class GameManager {
         this.canRevive = canRevive;
     }
 
+    public boolean isInvisible() {
+        return isInvisible;
+    }
+
+    public void setInvisible(boolean invisible) {
+        isInvisible = invisible;
+    }
+
+
+    public boolean isSpeed() {
+        return isSpeed;
+    }
+
+    public void setSpeed(boolean speed) {
+        isSpeed = speed;
+    }
 
 
     public static GameManager getInstance() {

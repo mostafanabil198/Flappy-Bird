@@ -1,6 +1,5 @@
 package hud;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -24,9 +23,9 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yalla.flappy.GameMain;
 
 
+import bird.Bird;
 import helpers.GameInfo;
 import helpers.GameManager;
-import pipes.Pipes;
 import scenes.GamePlay;
 import scenes.Levels;
 import scenes.MainMenu;
@@ -35,34 +34,24 @@ public class UiHud {
     private Stage stage;
     private GameMain game;
     private Viewport gameViewPort;
-    private Label scoreLbl, highScoreLbl, coinLbl;
+    private Label scoreLbl, highScoreLbl, coinLbl, invisibleTime;
     private ImageButton retryBtn, menuBtn, reviveBtn, backToLevelsBtn, nextLevelBtn;
-    private Image gameover, crown, coinImg;
-
-    public int getScore() {
-        return score;
-    }
-
-    public void setScore(int score) {
-        this.score = score;
-    }
-
-    private int score;
-
-    public int getCoins() {
-        return coins;
-    }
-
-    public void setCoins(int coins) {
-        this.coins = coins;
-    }
-
+    private Image gameover, crown, coinImg, invisibleImg;
+    private Bird bird;
     private int coins;
     private GamePlay gamePlay;
+    private int score;
+    private BitmapFont font;
+    private FreeTypeFontGenerator.FreeTypeFontParameter parameter;
+    private int time;
+    private FreeTypeFontGenerator generator;
+    private Label speedTime;
+    private Image speedImg;
 
-    public UiHud(GameMain game, GamePlay gamePlay) {
+    public UiHud(GameMain game, GamePlay gamePlay, Bird bird) {
         this.game = game;
         this.gamePlay = gamePlay;
+        this.bird = bird;
         gameViewPort = new FitViewport(GameInfo.WIDTH, GameInfo.HEIGHT, new OrthographicCamera());
         stage = new Stage(gameViewPort, game.getBatch());
         createLable();
@@ -72,13 +61,13 @@ public class UiHud {
     }
 
     private void createLable() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Flappy Bird Font/04b_19.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("Flappy Bird Font/04b_19.ttf"));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 100;
         parameter.shadowColor = Color.GRAY;
         parameter.shadowOffsetX = 1;
         parameter.shadowOffsetY = 1;
-        BitmapFont font = generator.generateFont(parameter);
+        font = generator.generateFont(parameter);
         if (gamePlay.isLevel()) {
             parameter.size = 50;
             font = generator.generateFont(parameter);
@@ -93,6 +82,7 @@ public class UiHud {
         font = generator.generateFont(parameter);
         coinLbl = new Label(String.valueOf(coins), new Label.LabelStyle(font, Color.WHITE));
         coinLbl.setPosition(50, GameInfo.HEIGHT / 2 + 250);
+
         coinImg = new Image(new Texture("Collectables/Coin.png"));
         coinImg.setPosition(12, GameInfo.HEIGHT / 2 + 250);
         coinImg.setSize(coinImg.getWidth() / 2, coinImg.getHeight() / 2);
@@ -100,13 +90,13 @@ public class UiHud {
     }
 
     private void createHighScoreLbl() {
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Flappy Bird Font/04b_19.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        generator = new FreeTypeFontGenerator(Gdx.files.internal("Flappy Bird Font/04b_19.ttf"));
+        parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 30;
         parameter.shadowColor = Color.BLACK;
         parameter.shadowOffsetX = 1;
         parameter.shadowOffsetY = 1;
-        BitmapFont font = generator.generateFont(parameter);
+        font = generator.generateFont(parameter);
         highScoreLbl = new Label(String.valueOf(GameManager.getInstance().getHighScore()), new Label.LabelStyle(font, Color.WHITE));
         highScoreLbl.setPosition(GameInfo.WIDTH / 2 + 10, GameInfo.HEIGHT / 2 + 220);
         crown = new Image(new Texture("Score/Crown.png"));
@@ -157,7 +147,7 @@ public class UiHud {
                 }
                 stage.addActor(scoreLbl);
                 createHighScoreLbl();
-                if(!gamePlay.isLevel()) {
+                if (!gamePlay.isLevel()) {
                     stage.addActor(highScoreLbl);
                     stage.addActor(crown);
                 }
@@ -291,6 +281,120 @@ public class UiHud {
         stage.addActor(retryBtn);
         stage.addActor(menuBtn);
     }
+
+
+    public void takeCollectables(final boolean speed, final boolean invisible) {
+        final RunnableAction start = new RunnableAction();
+        start.setRunnable(new Runnable() {
+            @Override
+            public void run() {
+                bird.setHasInvisible(invisible || speed);
+                bird.setHasSpeed(speed);
+                GameManager.getInstance().setInvisible(invisible || speed);
+                GameManager.getInstance().setSpeed(speed);
+                gamePlay.makePipesSensors(speed || invisible);
+                parameter.size = 30;
+                font = generator.generateFont(parameter);
+                if (time != 5) {
+                    time += 5;
+                }
+                if (invisible) {
+                    bird.createAnimation(" Inv");
+                    invisibleTime = new Label("", new Label.LabelStyle(font, Color.WHITE));
+                    invisibleTime.setPosition(50, GameInfo.HEIGHT / 2 + 210);
+                    invisibleImg = new Image(new Texture("Collectables/Invisible.png"));
+                    invisibleImg.setPosition(12, GameInfo.HEIGHT / 2 + 200);
+                    invisibleImg.setSize(invisibleImg.getWidth() / 2, invisibleImg.getHeight() / 2);
+                    updateInvisibleTimeLbl();
+                    stage.addActor(invisibleImg);
+                    stage.addActor(invisibleTime);
+                } else if (speed) {
+//                    gamePlay.time = 0.8f;
+//                    gamePlay.removeSequance();
+//                    gamePlay.createAllPipes();
+                    speedTime = new Label("", new Label.LabelStyle(font, Color.WHITE));
+                    speedTime.setPosition(50, GameInfo.HEIGHT / 2 + 160);
+                    speedImg = new Image(new Texture("Collectables/Speed.png"));
+                    speedImg.setPosition(12, GameInfo.HEIGHT / 2 + 150);
+                    speedImg.setSize(speedImg.getWidth() / 2, speedImg.getHeight() / 2);
+                    updateSpeedTimeLbl();
+                    stage.addActor(speedImg);
+                    stage.addActor(speedTime);
+                }
+
+
+            }
+        });
+
+        RunnableAction stop = new RunnableAction();
+        stop.setRunnable(new Runnable() {
+            @Override
+            public void run() {
+//                gamePlay.time = 1.5f;
+//                gamePlay.removeSequance();
+//                gamePlay.createAllPipes();
+                bird.setHasInvisible(false);
+                bird.setHasSpeed(false);
+                GameManager.getInstance().setInvisible(false);
+                GameManager.getInstance().setSpeed(false);
+                bird.createAnimation("");
+                gamePlay.makePipesSensors(false);
+                if (time <= 1) {
+                    time = 5;
+                }
+                if (speed) {
+                    stage.getActors().removeValue(speedImg, true);
+                    stage.getActors().removeValue(speedTime, true);
+                }
+                if (invisible) {
+                    stage.getActors().removeValue(invisibleImg, true);
+                    stage.getActors().removeValue(invisibleTime, true);
+                }
+            }
+        });
+
+        SequenceAction sa = new SequenceAction();
+        sa.addAction(start);
+        sa.addAction(Actions.delay(5));
+        sa.addAction(stop);
+        stage.addAction(sa);
+
+    }
+
+    public void updateInvisibleTimeLbl() {
+        invisibleTime.setText(String.valueOf(time));
+    }
+
+    public void updateSpeedTimeLbl() {
+        speedTime.setText(String.valueOf(time));
+    }
+
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+
+    public int getCoins() {
+        return coins;
+    }
+
+    public void setCoins(int coins) {
+        this.coins = coins;
+    }
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
 
 }
 

@@ -1,8 +1,6 @@
 package scenes;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.GL20;
@@ -18,7 +16,7 @@ import com.badlogic.gdx.physics.box2d.ContactListener;
 import com.badlogic.gdx.physics.box2d.Fixture;
 import com.badlogic.gdx.physics.box2d.Manifold;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.scenes.scene2d.Action;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.actions.RunnableAction;
 import com.badlogic.gdx.scenes.scene2d.actions.SequenceAction;
@@ -26,8 +24,6 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yalla.flappy.GameMain;
-
-import java.util.Random;
 
 import bird.Bird;
 import collectables.Collectables;
@@ -53,13 +49,16 @@ public class GamePlay implements Screen, ContactListener {
     private UiHud hud;
     public float time = 1.5f;
     private boolean firstTouch;
-    private Sound scoreSound, dieSound, flyingSound;
+    private Sound scoreSound, dieSound, flyingSound, tickSound;
     private Texture tapToPlay;
     private Array<Collectables> collectables;
     private int targetScore;
     private int winCoins;
     private boolean isLevel;
     private int currentLevel;
+    private float timeCount = 0;
+    private Actor actor;
+    private SequenceAction sa;
 
 
     public GamePlay(GameMain game, boolean isLevel, int currentlevel, int targetScore, int winCoins) {
@@ -80,10 +79,12 @@ public class GamePlay implements Screen, ContactListener {
         world = new World(new Vector2(0, -12.8f), true);
         world.setContactListener(this);
         bird = new Bird(world, GameInfo.WIDTH / 2f - 80, GameInfo.HEIGHT / 2f);
+        bird.setHasInvisible(false);
         groundBody = new GroundBody(world, grounds.get(0));
-        hud = new UiHud(game, this);
+        hud = new UiHud(game, this, bird);
         flyingSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Fly.mp3"));
         scoreSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Score.mp3"));
+        tickSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Tick.mp3"));
         dieSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Dead.mp3"));
         tapToPlay = new Texture("Buttons/Touch To Start.png");
         collectables = new Array<Collectables>();
@@ -100,10 +101,34 @@ public class GamePlay implements Screen, ContactListener {
     void update(float dt) {
         checkFirstTouch();
         if (bird.isAlive()) {
+            if (bird.isHasInvisible()) {
+                makePipesSensors(true);
+                timeCount += dt;
+                if (timeCount >= 1) {
+                    hud.setTime(hud.getTime() - 1);
+                    tickSound.play();
+                    if (!bird.isHasSpeed()) {
+                        hud.updateInvisibleTimeLbl();
+                    } else {
+                        hud.updateSpeedTimeLbl();
+                    }
+                    timeCount = 0;
+                }
+            } else {
+                makePipesSensors(false);
+            }
+
+//            if (bird.isHasSpeed()) {
+//                changePipeSpeed(-10f);
+//
+//            } else {
+//                changePipeSpeed(-2.5f);
+//            }
             moveBackgrounds();
             moveGrounds();
             inputHandle();
             updatePipes();
+
             movePipe();
         }
     }
@@ -175,9 +200,22 @@ public class GamePlay implements Screen, ContactListener {
         }
     }
 
+    void changePipeSpeed(float speed) {
+        for (Pipes pipe : pipesArray) {
+            pipe.speed = speed;
+        }
+    }
+
+
     void stopPipes() {
         for (Pipes pipe : pipesArray) {
             pipe.stopPipes();
+        }
+    }
+
+    public void makePipesSensors(boolean sensor) {
+        for (Pipes pipe : pipesArray) {
+            pipe.makeSensore(sensor);
         }
     }
 
@@ -192,7 +230,7 @@ public class GamePlay implements Screen, ContactListener {
         }
     }
 
-    void createAllPipes() {
+    public void createAllPipes() {
         RunnableAction run = new RunnableAction();
         run.setRunnable(new Runnable() {
             @Override
@@ -200,11 +238,12 @@ public class GamePlay implements Screen, ContactListener {
                 createPipes();
             }
         });
-        SequenceAction sa = new SequenceAction();
+        sa = new SequenceAction();
         sa.addAction(Actions.delay(time));
         sa.addAction(run);
         hud.getStage().addAction(Actions.forever(sa));
     }
+
 
     void birdDied() {
         GameManager.getInstance().score = hud.getScore();
@@ -323,7 +362,9 @@ public class GamePlay implements Screen, ContactListener {
         }
 
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Pipe" && bird.isAlive()) {
-            birdDied();
+            if (!bird.isHasInvisible()) {
+                birdDied();
+            }
         }
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Ground" && bird.isAlive()) {
             birdDied();
@@ -339,13 +380,18 @@ public class GamePlay implements Screen, ContactListener {
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Coin" && bird.isAlive()) {
             fix2.setUserData("Remove");
             hud.incrementCoins();
-
+            hud.takeCollectables(true, false);
+        }
+        if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Invisible" && bird.isAlive()) {
+            fix2.setUserData("Remove");
+            hud.takeCollectables(false, true);
         }
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Speed" && bird.isAlive()) {
             fix2.setUserData("Remove");
-            bird.setHasSpeed(true);
-
+            hud.takeCollectables(true, false);
         }
+
+
     }
 
     @Override

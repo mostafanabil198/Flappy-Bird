@@ -61,9 +61,8 @@ public class Pipes {
         body2 = world.createBody(bodyDef);
         body2.setFixedRotation(false);
         //create body for score
-        bodyDef.position.set(pipe1.getX() / GameInfo.PPM, y / GameInfo.PPM);
+        bodyDef.position.set(pipe1.getX() / GameInfo.PPM, GameInfo.HEIGHT / 2 / GameInfo.PPM);
         body3 = world.createBody(bodyDef);
-
 
         PolygonShape shape = new PolygonShape();
         shape.setAsBox(pipe1.getWidth() / GameInfo.PPM / 2f, pipe1.getHeight() / GameInfo.PPM / 2f);
@@ -74,7 +73,7 @@ public class Pipes {
         fixture1.setUserData("Pipe");
         fixture2 = body2.createFixture(fixtureDef);
         fixture2.setUserData("Pipe");
-        shape.setAsBox(3 / GameInfo.PPM, pipe1.getHeight() / 2 / GameInfo.PPM);
+        shape.setAsBox(3 / GameInfo.PPM, GameInfo.HEIGHT / 2 / GameInfo.PPM);
         fixtureDef.shape = shape;
         fixtureDef.filter.categoryBits = GameInfo.SCORE;
         fixtureDef.isSensor = true;
@@ -84,7 +83,7 @@ public class Pipes {
 
         //Create Collectables
         randomCollectable();
-        if (colName == "Coin" || colName == "Speed") {
+        if (colName != "") {
             collectable = new Sprite(new Texture("Collectables/" + colName + ".png"));
             collectable.setPosition(x, y);
             bodyDef.position.set(collectable.getX() / GameInfo.PPM, collectable.getY() / GameInfo.PPM);
@@ -106,14 +105,14 @@ public class Pipes {
     void randomCollectable() {
         int r = rand.nextInt(100);
         if ((r == 10 || r == 77 || r == 63) && numSpeed < 3) {
-            colName = "Speed";
+            colName = "Invisible";
         } else if (((r > 1 && r < 7) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97)) && numCoins < 30) {
             colName = "Coin";
         } else {
             colName = "";
         }
 
-        if (gamePlay.isLevel()) {
+        if (gamePlay.isLevel() || GameManager.getInstance().isInvisible() || GameManager.getInstance().isSpeed()) {
             colName = "";
         }
     }
@@ -186,5 +185,11 @@ public class Pipes {
     public Sprite getPipe2() {
         return pipe2;
     }
+
+    public void makeSensore(boolean sensor) {
+        fixture1.setSensor(sensor);
+        fixture2.setSensor(sensor);
+    }
+
 
 }
