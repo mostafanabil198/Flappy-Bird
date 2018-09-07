@@ -1,0 +1,20 @@
+
+Bird3S.png
+size: 128,64
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+frame-1
+  rotate: false
+  xy: 2, 2
+  size: 60, 53
+  orig: 60, 53
+  offset: 0, 0
+  index: -1
+frame-2
+  rotate: false
+  xy: 64, 2
+  size: 60, 53
+  orig: 60, 53
+  offset: 0, 0
+  index: -1

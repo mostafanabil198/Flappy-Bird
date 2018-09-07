@@ -1,5 +1,7 @@
 package helpers;
 
+import com.badlogic.gdx.utils.Array;
+
 public class GameData {
 
     private int highScore;
@@ -8,7 +10,10 @@ public class GameData {
     private int userCurrentLevel;
     private final int[] levelsScores = {5, 10, 15, 20, 25, 35, 50, 60, 70, 85, 100, 110, 125, 150, 175, 200};
     private final int[] levelsCoins = {1, 2, 3, 4, 5, 8, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100};
+    private final int[] birdsPrices = {0, 75, 100, 120, 150, 200, 250, 300};
     private final int totalShownLevels = 16;
+    private Array<Integer> myBirds;
+    private boolean[] AllBirds;
 
     public int[] getLevelsScores() {
         return levelsScores;
@@ -45,6 +50,26 @@ public class GameData {
 
     public void setUserCurrentLevel(int userCurrentLevel) {
         this.userCurrentLevel = userCurrentLevel;
+    }
+
+    public Array<Integer> getMyBirds() {
+        return myBirds;
+    }
+
+    public void setMyBirds(Array<Integer> myBirds) {
+        this.myBirds = myBirds;
+    }
+
+    public boolean[] getAllBirds() {
+        return AllBirds;
+    }
+
+    public void setAllBirds(boolean[] allBirds) {
+        AllBirds = allBirds;
+    }
+
+    public int[] getBirdsPrices() {
+        return birdsPrices;
     }
 
     public int getTotalShownLevels() {

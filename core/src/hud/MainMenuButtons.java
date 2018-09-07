@@ -24,6 +24,7 @@ import helpers.GameManager;
 import scenes.GamePlay;
 import scenes.HighScore;
 import scenes.Levels;
+import scenes.Market;
 
 public class MainMenuButtons {
 
@@ -84,6 +85,13 @@ public class MainMenuButtons {
                 stage.dispose();
             }
         });
+        marketBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                game.setScreen(new Market(game));
+                stage.dispose();
+            }
+        });
         stage.addActor(highScoreBtn);
         stage.addActor(playBtn);
         stage.addActor(levelBtn);
@@ -101,7 +109,7 @@ public class MainMenuButtons {
         parameter.shadowOffsetY = 1;
         BitmapFont font = generator.generateFont(parameter);
         coinsLbl = new Label(String.valueOf(GameManager.getInstance().getTotalCoins()), new Label.LabelStyle(font, Color.WHITE));
-        coinsLbl.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT - 157);
+        coinsLbl.setPosition(GameInfo.WIDTH - 68, GameInfo.HEIGHT - 157);
         coinsBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Show Coins.png"))));
         coinsBtn.setPosition(GameInfo.WIDTH - 60, GameInfo.HEIGHT - 140, Align.center);
         stage.addActor(coinsBtn);
@@ -112,7 +120,7 @@ public class MainMenuButtons {
         if (changeBirdBtn != null) {
             changeBirdBtn.remove();
         }
-        changeBirdBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Birds/" + GameManager.getInstance().getBird() + "/Idle.png"))));
+        changeBirdBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Birds/Bird" + GameManager.getInstance().getBird() + ".png"))));
         changeBirdBtn.setPosition(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2 + 210, Align.center);
         changeBirdBtn.addListener(new ChangeListener() {
             @Override

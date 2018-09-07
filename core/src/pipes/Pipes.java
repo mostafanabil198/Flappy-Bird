@@ -104,7 +104,7 @@ public class Pipes {
 
     void randomCollectable() {
         int r = rand.nextInt(100);
-        if ((r == 10 || r == 77 || r == 63) && numSpeed < 3) {
+        if ((r == 10 || r == 77 || r == 63 || r == 50 || r == 31 || r == 99 || r == 37) && numSpeed < 3) {
             colName = "Invisible";
         } else if (((r > 1 && r < 7) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97)) && numCoins < 30) {
             colName = "Coin";

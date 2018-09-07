@@ -30,8 +30,8 @@ public class Bird extends Sprite {
     private boolean hasSpeed;
 
     public Bird(World world, float x, float y) {
-        super(new Texture("Birds/" + GameManager.getInstance().getBird() + "/IdleS.png"));
-        birdDead = new Texture("Birds/" + GameManager.getInstance().getBird() + "/Dead.png");
+        super(new Texture("Birds/Bird" + GameManager.getInstance().getBird() + ".png"));
+        birdDead = new Texture("Birds/Bird" + GameManager.getInstance().getBird() + "-Dead.png");
         setPosition(x, y);
         this.world = world;
         createBody();
@@ -94,7 +94,7 @@ public class Bird extends Sprite {
     }
 
     public void createAnimation(String inv) {
-        birdAtlas = new TextureAtlas("Birds/" + GameManager.getInstance().getBird() + "/" + GameManager.getInstance().getBird() + " Bird" + inv + ".atlas");
+        birdAtlas = new TextureAtlas("Birds/Bird" + GameManager.getInstance().getBird() + "S" + inv + ".atlas");
         animation = new Animation(1f / 7f, birdAtlas.getRegions());
     }
 

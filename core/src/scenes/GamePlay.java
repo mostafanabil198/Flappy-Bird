@@ -166,7 +166,7 @@ public class GamePlay implements Screen, ContactListener {
         for (Sprite bg : bgs) {
             float x1 = bg.getX() - 3.5f;
             bg.setPosition(x1, bg.getY());
-            if (bg.getX() + bg.getWidth() / 2 + GameInfo.WIDTH < mainCamera.position.x) {
+            if (bg.getX() + bg.getWidth() + GameInfo.WIDTH < mainCamera.position.x) {
                 bg.setPosition(bg.getX() + bg.getWidth() * bgs.size, bg.getY());
             }
         }
@@ -380,7 +380,7 @@ public class GamePlay implements Screen, ContactListener {
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Coin" && bird.isAlive()) {
             fix2.setUserData("Remove");
             hud.incrementCoins();
-            hud.takeCollectables(true, false);
+//            hud.takeCollectables(false, true);
         }
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Invisible" && bird.isAlive()) {
             fix2.setUserData("Remove");
