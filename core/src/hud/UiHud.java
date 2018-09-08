@@ -361,6 +361,22 @@ public class UiHud {
 
     }
 
+    public void fire() {
+        RunnableAction run = new RunnableAction();
+        run.setRunnable(new Runnable() {
+            @Override
+            public void run() {
+                bird.setHasFire(true);
+                gamePlay.createFire();
+            }
+        });
+
+        SequenceAction sa = new SequenceAction();
+        sa.addAction(run);
+        sa.addAction(Actions.delay(.1f));
+        stage.addAction(Actions.repeat(20, sa));
+    }
+
     public void updateInvisibleTimeLbl() {
         invisibleTime.setText(String.valueOf(time));
     }

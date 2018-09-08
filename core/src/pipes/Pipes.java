@@ -103,11 +103,13 @@ public class Pipes {
     }
 
     void randomCollectable() {
-        int r = rand.nextInt(100);
+        int r = rand.nextInt(150);
         if ((r == 10 || r == 77 || r == 63 || r == 50 || r == 31 || r == 99 || r == 37) && numSpeed < 3) {
             colName = "Invisible";
-        } else if (((r > 1 && r < 7) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97)) && numCoins < 30) {
+        } else if (((r > 1 && r < 7) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97) || (r > 142 && r < 146)) && numCoins < 30) {
             colName = "Coin";
+        } else if (r == 12 || r == 110 || r == 132 || r == 19) {
+            colName = "Fire";
         } else {
             colName = "";
         }
@@ -124,24 +126,44 @@ public class Pipes {
     }
 
     public void drawPipes(SpriteBatch batch) {
-        batch.draw(pipe1, pipe1.getX() - pipe1.getWidth() / 2f, pipe1.getY() - pipe1.getHeight() / 2);
-        batch.draw(pipe2, pipe2.getX() - pipe2.getWidth() / 2f, pipe2.getY() - pipe2.getHeight() / 2);
+        if (fixture1.getUserData() == "Pipe") {
+            batch.draw(pipe1, pipe1.getX() - pipe1.getWidth() / 2f, pipe1.getY() - pipe1.getHeight() / 2);
+        }
+        if (fixture2.getUserData() == "Pipe") {
+            batch.draw(pipe2, pipe2.getX() - pipe2.getWidth() / 2f, pipe2.getY() - pipe2.getHeight() / 2);
+        }
         if (colName != "") {
             batch.draw(collectable, collectable.getX() - collectable.getWidth() / 2f, collectable.getY() - collectable.getHeight() / 2);
         }
     }
 
     public void updatePipes() {
-        pipe1.setPosition(body1.getPosition().x * GameInfo.PPM, body1.getPosition().y * GameInfo.PPM);
-        pipe2.setPosition(body2.getPosition().x * GameInfo.PPM, body2.getPosition().y * GameInfo.PPM);
+        if (fixture1.getUserData() == "Pipe") {
+            pipe1.setPosition(body1.getPosition().x * GameInfo.PPM, body1.getPosition().y * GameInfo.PPM);
+        }
+        if (fixture2.getUserData() == "Pipe") {
+            pipe2.setPosition(body2.getPosition().x * GameInfo.PPM, body2.getPosition().y * GameInfo.PPM);
+        }
         if (colName != "") {
             collectable.setPosition(body4.getPosition().x * GameInfo.PPM, body4.getPosition().y * GameInfo.PPM);
         }
     }
 
     public void movePipes() {
-        body2.setLinearVelocity(speed, 0);
-        body1.setLinearVelocity(speed, 0);
+        if (fixture2.getUserData() == "Pipe") {
+            body2.setLinearVelocity(speed, 0);
+        } else {
+            pipe2.getTexture().dispose();
+            fixture2.setSensor(true);
+            body2.setActive(false);
+        }
+        if (fixture1.getUserData() == "Pipe") {
+            body1.setLinearVelocity(speed, 0);
+        } else {
+            pipe1.getTexture().dispose();
+            fixture1.setSensor(true);
+            body1.setActive(false);
+        }
         body3.setLinearVelocity(speed, 0);
         if (colName != "") {
             body4.setLinearVelocity(speed, 0);

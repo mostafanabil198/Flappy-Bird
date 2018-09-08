@@ -28,6 +28,7 @@ public class Bird extends Sprite {
     private float elapsedTime;
     private boolean hasInvisible;
     private boolean hasSpeed;
+    private boolean hasFire;
 
     public Bird(World world, float x, float y) {
         super(new Texture("Birds/Bird" + GameManager.getInstance().getBird() + ".png"));
@@ -59,7 +60,7 @@ public class Bird extends Sprite {
     }
 
     public void birdFlap() {
-        body.setLinearVelocity(0, 4.8f);
+        body.setLinearVelocity(0, 4.6f);
     }
 
     public void drawBirdIdle(SpriteBatch batch) {
@@ -120,6 +121,14 @@ public class Bird extends Sprite {
 
     public void setHasSpeed(boolean hasSpeed) {
         this.hasSpeed = hasSpeed;
+    }
+
+    public boolean isHasFire() {
+        return hasFire;
+    }
+
+    public void setHasFire(boolean hasFire) {
+        this.hasFire = hasFire;
     }
 
 

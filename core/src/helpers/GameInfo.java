@@ -11,4 +11,5 @@ public class GameInfo {
     public static final short SKY = 9;
     public static final short COLLECTABLES = 4;
     public static final short DESTROYED = 3;
+    public static final short FIRE = 5;
 }

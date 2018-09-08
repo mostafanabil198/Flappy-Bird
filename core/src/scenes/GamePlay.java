@@ -27,6 +27,7 @@ import com.yalla.flappy.GameMain;
 
 import bird.Bird;
 import collectables.Collectables;
+import collectables.Fire;
 import ground.GroundBody;
 import helpers.GameInfo;
 import helpers.GameManager;
@@ -59,6 +60,7 @@ public class GamePlay implements Screen, ContactListener {
     private float timeCount = 0;
     private Actor actor;
     private SequenceAction sa;
+    private Array<Fire> fires = new Array<Fire>();
 
 
     public GamePlay(GameMain game, boolean isLevel, int currentlevel, int targetScore, int winCoins) {
@@ -128,11 +130,38 @@ public class GamePlay implements Screen, ContactListener {
             moveGrounds();
             inputHandle();
             updatePipes();
-
+            moveFires();
+            removeFire();
             movePipe();
         }
     }
 
+
+    public void createFire() {
+        Fire f = new Fire(game, world, bird);
+        fires.add(f);
+    }
+
+    public void moveFires() {
+        for (Fire f : fires) {
+            f.fireAndUpdate();
+        }
+    }
+
+    public void drawFires(SpriteBatch batch) {
+        for (Fire f : fires) {
+            f.drawFire(batch);
+        }
+    }
+
+    public void removeFire() {
+        for (Fire f : fires) {
+            if (f.getFixture().getUserData() == "Remove") {
+                f.removeFire();
+                fires.removeValue(f, true);
+            }
+        }
+    }
 
     void createBackgrounds() {
         for (int i = 0; i < 3; i++) {
@@ -301,6 +330,7 @@ public class GamePlay implements Screen, ContactListener {
         }
         bird.animateBird(game.getBatch());
         drawPipes(game.getBatch());
+        drawFires(game.getBatch());
         game.getBatch().end();
         //debugRenderer.render(world, debugCamera.combined);
         game.getBatch().setProjectionMatrix(hud.getStage().getCamera().combined);
@@ -382,6 +412,12 @@ public class GamePlay implements Screen, ContactListener {
             hud.incrementCoins();
 //            hud.takeCollectables(false, true);
         }
+
+        if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Fire" && bird.isAlive()) {
+            fix2.setUserData("Remove");
+            hud.fire();
+        }
+
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Invisible" && bird.isAlive()) {
             fix2.setUserData("Remove");
             hud.takeCollectables(false, true);
@@ -389,6 +425,15 @@ public class GamePlay implements Screen, ContactListener {
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Speed" && bird.isAlive()) {
             fix2.setUserData("Remove");
             hud.takeCollectables(true, false);
+        }
+
+        if (contact.getFixtureA().getUserData() == "Pipe" && contact.getFixtureB().getUserData() == "Fire") {
+            contact.getFixtureB().setUserData("Remove");
+            contact.getFixtureA().setUserData("Remove");
+        }
+        if (contact.getFixtureB().getUserData() == "Pipe" && contact.getFixtureA().getUserData() == "Fire") {
+            contact.getFixtureB().setUserData("Remove");
+            contact.getFixtureA().setUserData("Remove");
         }
 
 
