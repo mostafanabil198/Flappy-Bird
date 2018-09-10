@@ -76,7 +76,7 @@ public class GamePlay implements Screen, ContactListener {
         debugCamera.setToOrtho(false, GameInfo.WIDTH / GameInfo.PPM, GameInfo.HEIGHT / GameInfo.PPM);
         debugCamera.position.set(GameInfo.WIDTH / 2f, GameInfo.HEIGHT / 2f, 0);
         debugRenderer = new Box2DDebugRenderer();
-        createBackgrounds();
+        createBackgrounds("Day");
         createGrounds();
         world = new World(new Vector2(0, -12.8f), true);
         world.setContactListener(this);
@@ -90,11 +90,17 @@ public class GamePlay implements Screen, ContactListener {
         dieSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Dead.mp3"));
         tapToPlay = new Texture("Buttons/Touch To Start.png");
         collectables = new Array<Collectables>();
-
+        GameManager.getInstance().setNumOfPipes(0);
+        GameManager.getInstance().setNumOfGames(GameManager.getInstance().getNumOfGames() + 1);
+        GameManager.getInstance().setNumOfTotalGames(GameManager.getInstance().getNumOfTotalGames() + 1);
+        Gdx.input.setInputProcessor(hud.getStage());
     }
 
     void inputHandle() {
-        if (Gdx.input.justTouched()) {
+        float y = Gdx.input.getY();
+        float x = Gdx.input.getX();
+        boolean b = x >= 70 && x <= 420 && y >= 1700 && y <= 1875;
+        if (Gdx.input.justTouched() && !b) {
             bird.birdFlap();
             flyingSound.play();
         }
@@ -120,12 +126,6 @@ public class GamePlay implements Screen, ContactListener {
                 makePipesSensors(false);
             }
 
-//            if (bird.isHasSpeed()) {
-//                changePipeSpeed(-10f);
-//
-//            } else {
-//                changePipeSpeed(-2.5f);
-//            }
             moveBackgrounds();
             moveGrounds();
             inputHandle();
@@ -163,9 +163,9 @@ public class GamePlay implements Screen, ContactListener {
         }
     }
 
-    void createBackgrounds() {
+    void createBackgrounds(String bgName) {
         for (int i = 0; i < 3; i++) {
-            Sprite bg = new Sprite(new Texture("Background/Day.jpg"));
+            Sprite bg = new Sprite(new Texture("Background/" + bgName + ".jpg"));
             bg.setPosition(i * bg.getWidth(), 0);
             bgs.add(bg);
         }
@@ -282,7 +282,11 @@ public class GamePlay implements Screen, ContactListener {
         stopPipes();
 //Score
         GameManager.getInstance().checkForNewHighScore();
-        GameManager.getInstance().addCoins(hud.getCoins());
+        if (GameManager.getInstance().getGameData().isHasX2Coins()) {
+            GameManager.getInstance().addCoins(hud.getCoins() * 2);
+        } else {
+            GameManager.getInstance().addCoins(hud.getCoins());
+        }
         hud.getStage().clear();
         hud.showScore();
 
@@ -478,3 +482,4 @@ public class GamePlay implements Screen, ContactListener {
         this.currentLevel = currentLevel;
     }
 }
+

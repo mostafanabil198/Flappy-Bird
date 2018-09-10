@@ -18,6 +18,16 @@ public class GameManager {
     private Boolean canRevive;
     private boolean isInvisible = false;
     private boolean isSpeed = false;
+    private int numOfGames = 0;
+    private int numOfTotalGames;
+    private int numOfPipes;
+
+    public void setNumOfTotalGames(int numOfTotalGames) {
+        this.numOfTotalGames = numOfTotalGames;
+        gameData.setNumOfTotalGames(numOfTotalGames);
+        saveData();
+    }
+
 
     private GameManager() {
     }
@@ -26,15 +36,22 @@ public class GameManager {
         if (!fileHandle.exists()) {
             gameData = new GameData();
             gameData.setHighScore(0);
-            gameData.setCoins(1500);
+            gameData.setCoins(15000);
             gameData.setUserCurrentLevel(1);
             gameData.setAllBirds(new boolean[8]);
             gameData.getAllBirds()[0] = true;
             gameData.setMyBirds(new Array<Integer>());
             gameData.getMyBirds().add(0);
+            gameData.setCurrentBird(birdIndex);
+            gameData.setNumOfTotalGames(0);
+            gameData.setHasX2Coins(false);
+            gameData.setHasFireOption(false);
+            gameData.setHasHideOption(false);
             saveData();
         } else {
             loadData();
+            birdIndex = gameData.getCurrentBird();
+            numOfTotalGames = gameData.getNumOfTotalGames();
         }
     }
 
@@ -89,13 +106,33 @@ public class GameManager {
                 break;
             }
         }
-
+        gameData.setCurrentBird(birdIndex);
+        saveData();
     }
 
     public int getTotalCoins() {
         return gameData.getCoins();
     }
 
+    public int getNumOfPipes() {
+        return numOfPipes;
+    }
+
+    public void setNumOfPipes(int numOfPipes) {
+        this.numOfPipes = numOfPipes;
+    }
+
+    public int getNumOfGames() {
+        return numOfGames;
+    }
+
+    public void setNumOfGames(int numOfGames) {
+        this.numOfGames = numOfGames;
+    }
+
+    public int getNumOfTotalGames() {
+        return numOfTotalGames;
+    }
 
     public GameData getGameData() {
         return gameData;

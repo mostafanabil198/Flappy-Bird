@@ -33,10 +33,10 @@ public class Market implements Screen {
     private GameMain game;
     private Texture bg;
     private Stage stage;
-    private ImageButton backBtn;
+    private ImageButton backBtn, x2CoinsBtn, firesBtn, hideBtn;
     private ImageButton[] birdsBtns;
     private Label[] birdsLbls;
-    private Label coinsLbl;
+    private Label coinsLbl, x2CoinsLbl, fireLbl, hideLbl, numOfFireLbl, numOfHideLbl;
     int i;
 
     public Market(GameMain game) {
@@ -52,6 +52,7 @@ public class Market implements Screen {
         birdsLbls = new Label[GameManager.getInstance().getGameData().getAllBirds().length];
         createBackBtn();
         createBirdsBtns();
+        createToolsBtns();
 
     }
 
@@ -116,9 +117,9 @@ public class Market implements Screen {
 
                 birdsLbls[i] = new Label(String.valueOf(GameManager.getInstance().getGameData().getBirdsPrices()[i]), new Label.LabelStyle(font, Color.WHITE));
                 if (i >= 2) {
-                    birdsLbls[i].setPosition(65 + 100 * (i % 4), (GameInfo.HEIGHT / 2 + 60) - ((int) (.25 * i)) * 170);
+                    birdsLbls[i].setPosition(65 + 100 * (i % 4), (GameInfo.HEIGHT / 2 + 85) - ((int) (.25 * i)) * 170);
                 } else {
-                    birdsLbls[i].setPosition(73 + 100 * (i % 4), (GameInfo.HEIGHT / 2 + 60) - ((int) (.25 * i)) * 170);
+                    birdsLbls[i].setPosition(73 + 100 * (i % 4), (GameInfo.HEIGHT / 2 + 85) - ((int) (.25 * i)) * 170);
                 }
                 birdsLbls[i].addListener(new ClickListener() {
                     @Override
@@ -133,12 +134,134 @@ public class Market implements Screen {
                     }
                 });
             }
-            birdsBtns[i].setPosition(50 + 100 * (i % 4), (GameInfo.HEIGHT / 2 + 45) - ((int) (.25 * i)) * 170);
+            birdsBtns[i].setPosition(50 + 100 * (i % 4), (GameInfo.HEIGHT / 2 + 70) - ((int) (.25 * i)) * 170);
             stage.addActor(birdsBtns[i]);
             if (!GameManager.getInstance().getGameData().getAllBirds()[i]) {
                 stage.addActor(birdsLbls[i]);
             }
         }
+
+    }
+
+    void createToolsBtns() {
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Flappy Bird Font/04b_19.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 20;
+        parameter.shadowOffsetX = 1;
+        parameter.shadowOffsetY = 1;
+        parameter.shadowColor = Color.BLUE;
+        BitmapFont font = generator.generateFont(parameter);
+
+        hideBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Buy.png"))));
+        firesBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Buy.png"))));
+        if (!GameManager.getInstance().getGameData().isHasX2Coins()) {
+            x2CoinsBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Buttons/Buy.png"))));
+            x2CoinsBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    if (GameManager.getInstance().getGameData().getCoins() >= 750) {
+                        GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 750);
+                        GameManager.getInstance().getGameData().setHasX2Coins(true);
+                        GameManager.getInstance().saveData();
+                        game.setScreen(new Market(game));
+                        stage.dispose();
+                    }
+                }
+            });
+            x2CoinsBtn.setPosition(355, 55);
+            x2CoinsLbl = new Label("500", new Label.LabelStyle(font, Color.WHITE));
+            x2CoinsLbl.setPosition(370, 70);
+
+            x2CoinsLbl.addListener(new ClickListener() {
+                @Override
+                public void clicked(InputEvent event, float x, float y) {
+
+
+                }
+            });
+            stage.addActor(x2CoinsBtn);
+            stage.addActor(x2CoinsLbl);
+
+        }
+
+        hideBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (GameManager.getInstance().getGameData().getCoins() >= 500) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 500);
+                    GameManager.getInstance().getGameData().setHasHideOption(true);
+                    GameManager.getInstance().getGameData().setNumOfHideOption(GameManager.getInstance().getGameData().getNumOfHideOption() + 1);
+                    GameManager.getInstance().saveData();
+                    game.setScreen(new Market(game));
+                    stage.dispose();
+                }
+            }
+        });
+
+        firesBtn.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if (GameManager.getInstance().getGameData().getCoins() >= 500) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 500);
+                    GameManager.getInstance().getGameData().setHasFireOption(true);
+                    GameManager.getInstance().getGameData().setNumOfFireOption(GameManager.getInstance().getGameData().getNumOfFireOption() + 1);
+                    GameManager.getInstance().saveData();
+                    game.setScreen(new Market(game));
+                    stage.dispose();
+                }
+            }
+        });
+        hideBtn.setPosition(50, 55);
+        firesBtn.setPosition(205, 55);
+
+        hideLbl = new Label("250", new Label.LabelStyle(font, Color.WHITE));
+        fireLbl = new Label("250", new Label.LabelStyle(font, Color.WHITE));
+
+        hideLbl.setPosition(65, 70);
+        fireLbl.setPosition(220, 70);
+
+        hideLbl.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (GameManager.getInstance().getGameData().getCoins() >= 250) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 250);
+                    GameManager.getInstance().getGameData().setHasHideOption(true);
+                    GameManager.getInstance().getGameData().setNumOfHideOption(GameManager.getInstance().getGameData().getNumOfHideOption() + 1);
+                    GameManager.getInstance().saveData();
+                    game.setScreen(new Market(game));
+                    stage.dispose();
+                }
+
+            }
+        });
+
+        fireLbl.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                if (GameManager.getInstance().getGameData().getCoins() >= 250) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 250);
+                    GameManager.getInstance().getGameData().setHasFireOption(true);
+                    GameManager.getInstance().getGameData().setNumOfFireOption(GameManager.getInstance().getGameData().getNumOfFireOption() + 1);
+                    GameManager.getInstance().saveData();
+                    game.setScreen(new Market(game));
+                    stage.dispose();
+                }
+
+            }
+        });
+
+        numOfHideLbl = new Label(String.valueOf(GameManager.getInstance().getGameData().getNumOfHideOption()), new Label.LabelStyle(font, Color.WHITE));
+        numOfFireLbl = new Label(String.valueOf(GameManager.getInstance().getGameData().getNumOfFireOption()), new Label.LabelStyle(font, Color.WHITE));
+        numOfHideLbl.setPosition(40, 150);
+        numOfFireLbl.setPosition(195, 150);
+
+
+        stage.addActor(firesBtn);
+        stage.addActor(hideBtn);
+        stage.addActor(fireLbl);
+        stage.addActor(hideLbl);
+        stage.addActor(numOfFireLbl);
+        stage.addActor(numOfHideLbl);
 
     }
 

@@ -14,6 +14,22 @@ public class GameData {
     private final int totalShownLevels = 16;
     private Array<Integer> myBirds;
     private boolean[] AllBirds;
+    private int currentBird;
+    private int numOfTotalGames;
+    private boolean hasHideOption;
+    private int numOfHideOption;
+    private boolean hasX2Coins;
+    private boolean hasFireOption;
+    private int numOfFireOption;
+
+
+    public int getNumOfTotalGames() {
+        return numOfTotalGames;
+    }
+
+    public void setNumOfTotalGames(int numOfTotalGames) {
+        this.numOfTotalGames = numOfTotalGames;
+    }
 
     public int[] getLevelsScores() {
         return levelsScores;
@@ -75,5 +91,56 @@ public class GameData {
     public int getTotalShownLevels() {
         return totalShownLevels;
     }
+
+
+    public int getCurrentBird() {
+        return currentBird;
+    }
+
+    public void setCurrentBird(int currentBird) {
+        this.currentBird = currentBird;
+    }
+
+
+    public boolean isHasHideOption() {
+        return hasHideOption;
+    }
+
+    public void setHasHideOption(boolean hasHideOption) {
+        this.hasHideOption = hasHideOption;
+    }
+
+    public int getNumOfHideOption() {
+        return numOfHideOption;
+    }
+
+    public void setNumOfHideOption(int numOfHideOption) {
+        this.numOfHideOption = numOfHideOption;
+    }
+
+    public boolean isHasX2Coins() {
+        return hasX2Coins;
+    }
+
+    public void setHasX2Coins(boolean hasX2Coins) {
+        this.hasX2Coins = hasX2Coins;
+    }
+
+    public boolean isHasFireOption() {
+        return hasFireOption;
+    }
+
+    public void setHasFireOption(boolean hasFireOption) {
+        this.hasFireOption = hasFireOption;
+    }
+
+    public int getNumOfFireOption() {
+        return numOfFireOption;
+    }
+
+    public void setNumOfFireOption(int numOfFireOption) {
+        this.numOfFireOption = numOfFireOption;
+    }
+
 
 }

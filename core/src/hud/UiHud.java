@@ -35,7 +35,7 @@ public class UiHud {
     private GameMain game;
     private Viewport gameViewPort;
     private Label scoreLbl, highScoreLbl, coinLbl, invisibleTime;
-    private ImageButton retryBtn, menuBtn, reviveBtn, backToLevelsBtn, nextLevelBtn;
+    private ImageButton retryBtn, menuBtn, reviveBtn, backToLevelsBtn, nextLevelBtn, useFireBtn, useHideBtn;
     private Image gameover, crown, coinImg, invisibleImg;
     private Bird bird;
     private int coins;
@@ -47,17 +47,25 @@ public class UiHud {
     private FreeTypeFontGenerator generator;
     private Label speedTime;
     private Image speedImg;
+    private String x2;
 
     public UiHud(GameMain game, GamePlay gamePlay, Bird bird) {
         this.game = game;
         this.gamePlay = gamePlay;
         this.bird = bird;
+        if (GameManager.getInstance().getGameData().isHasX2Coins()) {
+            x2 = " x2";
+        } else {
+            x2 = "";
+        }
         gameViewPort = new FitViewport(GameInfo.WIDTH, GameInfo.HEIGHT, new OrthographicCamera());
         stage = new Stage(gameViewPort, game.getBatch());
         createLable();
         stage.addActor(scoreLbl);
         stage.addActor(coinLbl);
         stage.addActor(coinImg);
+
+        createUseBtns();
     }
 
     private void createLable() {
@@ -80,7 +88,7 @@ public class UiHud {
 
         parameter.size = 30;
         font = generator.generateFont(parameter);
-        coinLbl = new Label(String.valueOf(coins), new Label.LabelStyle(font, Color.WHITE));
+        coinLbl = new Label(String.valueOf(coins) + x2, new Label.LabelStyle(font, Color.WHITE));
         coinLbl.setPosition(50, GameInfo.HEIGHT / 2 + 250);
 
         coinImg = new Image(new Texture("Collectables/Coin.png"));
@@ -118,7 +126,8 @@ public class UiHud {
 
     public void incrementCoins() {
         coins++;
-        coinLbl.setText(String.valueOf(coins));
+        coinLbl.setText(String.valueOf(coins) + x2);
+
     }
 
     public void showScore() {
@@ -202,6 +211,47 @@ public class UiHud {
         sa.addAction(btns);
         stage.addAction(sa);
 
+    }
+
+    public void createUseBtns() {
+        if (GameManager.getInstance().getGameData().isHasHideOption()) {
+            useHideBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Collectables/Invisible.png"))));
+            useHideBtn.setSize(useHideBtn.getWidth(), useHideBtn.getHeight());
+            useHideBtn.setPosition(10, 20);
+            useHideBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    takeCollectables(false, true);
+                    GameManager.getInstance().getGameData().setNumOfHideOption(GameManager.getInstance().getGameData().getNumOfHideOption() - 1);
+                    if (GameManager.getInstance().getGameData().getNumOfHideOption() == 0) {
+                        GameManager.getInstance().getGameData().setHasHideOption(false);
+                    }
+                    GameManager.getInstance().saveData();
+                    stage.getActors().removeValue(useHideBtn, true);
+                }
+            });
+            stage.addActor(useHideBtn);
+        }
+
+        if (GameManager.getInstance().getGameData().isHasFireOption()) {
+            useFireBtn = new ImageButton(new SpriteDrawable(new Sprite(new Texture("Collectables/Fire.png"))));
+            useFireBtn.setSize(useFireBtn.getWidth(), useFireBtn.getHeight());
+            useFireBtn.setPosition(100, 20);
+            useFireBtn.addListener(new ChangeListener() {
+                @Override
+                public void changed(ChangeEvent event, Actor actor) {
+                    fire();
+                    GameManager.getInstance().getGameData().setNumOfFireOption(GameManager.getInstance().getGameData().getNumOfFireOption() - 1);
+                    if (GameManager.getInstance().getGameData().getNumOfFireOption() == 0) {
+                        GameManager.getInstance().getGameData().setHasFireOption(false);
+                    }
+                    GameManager.getInstance().saveData();
+                    stage.getActors().removeValue(useFireBtn, true);
+
+                }
+            });
+            stage.addActor(useFireBtn);
+        }
     }
 
     private void createWinLevelButtons() {
@@ -377,6 +427,7 @@ public class UiHud {
         stage.addAction(Actions.repeat(20, sa));
     }
 
+
     public void updateInvisibleTimeLbl() {
         invisibleTime.setText(String.valueOf(time));
     }
@@ -415,5 +466,18 @@ public class UiHud {
 }
 
 
-
-
+//    public double subtractDays(String mailDate) throws ParseException {
+//        String todayDate = h.todayDate();
+//        Date d1 = new SimpleDateFormat("yyyy-MM-dd").parse(mailDate);
+//        Date d2 = new SimpleDateFormat("yyyy-MM-dd").parse(todayDate);
+//        double difference = (double) Math.abs(d2.getTime() - d1.getTime());
+//        double dif = difference / (60 * 60 * 1000);
+//        return dif;
+//    }
+//
+//
+//    public String todayDate() {
+//        Date d = new Date();
+//        SimpleDateFormat ft = new SimpleDateFormat("yyyy-MM-dd");
+//        return ft.format(d);
+//    }

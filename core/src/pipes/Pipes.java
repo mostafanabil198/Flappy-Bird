@@ -25,7 +25,7 @@ public class Pipes {
     private World world;
     private Body body1, body2, body3, body4;
     private Sprite pipe1, pipe2, collectable;
-    private final float DISTANCE_BETWEEN_PIPES = 395f;
+    private float DISTANCE_BETWEEN_PIPES = 395f;
     private Random rand = new Random();
     private OrthographicCamera camera;
     public float speed = -2.5f;
@@ -45,6 +45,17 @@ public class Pipes {
     }
 
     void createPipes(float x, float y) {
+        GameManager.getInstance().setNumOfPipes(GameManager.getInstance().getNumOfPipes() + 1);
+        if (GameManager.getInstance().getNumOfPipes() < 5) {
+            DISTANCE_BETWEEN_PIPES = 410f;
+        } else if (GameManager.getInstance().getNumOfPipes() < 10) {
+            DISTANCE_BETWEEN_PIPES = 403f;
+        } else if (GameManager.getInstance().getNumOfPipes() < 15) {
+            DISTANCE_BETWEEN_PIPES = 398f;
+        } else {
+            DISTANCE_BETWEEN_PIPES = 395f;
+        }
+
         pipe1 = new Sprite(new Texture("Pipes/Pipe 1.png"));
         pipe2 = new Sprite(new Texture("Pipes/Pipe 2.png"));
         pipe1.setPosition(x, y + DISTANCE_BETWEEN_PIPES);
@@ -106,7 +117,7 @@ public class Pipes {
         int r = rand.nextInt(150);
         if ((r == 10 || r == 77 || r == 63 || r == 50 || r == 31 || r == 99 || r == 37) && numSpeed < 3) {
             colName = "Invisible";
-        } else if (((r > 1 && r < 7) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97) || (r > 142 && r < 146)) && numCoins < 30) {
+        } else if (((r > 1 && r < 7) || (r > 120 && r < 130) || (r < 113 && r > 118) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97) || (r > 142 && r < 146) || (r < 67 && r < 69)) && numCoins < 40) {
             colName = "Coin";
         } else if (r == 12 || r == 110 || r == 132 || r == 19) {
             colName = "Fire";
