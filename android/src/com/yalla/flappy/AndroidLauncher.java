@@ -42,11 +42,6 @@ public class AndroidLauncher extends AndroidApplication {
         getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);
         final int height = displayMetrics.heightPixels;
 
-//        DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-//        float dp = 50f;
-//        float fpixels = metrics.density * dp;
-//        int pixels = (int) (fpixels + 0.5f);
-
         final LinearLayout.LayoutParams gameParms = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, height);
         adView.loadAd(builder.build());
 
@@ -54,21 +49,11 @@ public class AndroidLauncher extends AndroidApplication {
         linearLayout.addView(adView, adParams);
 
         layout.addView(linearLayout);
-        //layout.addView(adView, adParams);
         adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-//                System.out.println(adView.getAdSize().getHeightInPixels(getContext()));
-//                DisplayMetrics metrics = getContext().getResources().getDisplayMetrics();
-//                float dp = 50;
-//                float fpixels = metrics.density * dp;
-//                int pixels = (int) (fpixels + 0.5f);
                 final LinearLayout.LayoutParams gameParms1 = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, height - adView.getAdSize().getHeightInPixels(getContext()));
                 gameView.setLayoutParams(gameParms1);
-//                linearLayout.removeAllViews();
-//                linearLayout.addView(gameView, gameParms1);
-//                linearLayout.addView(adView, adParams);
-
 
             }
         });
