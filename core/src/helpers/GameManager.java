@@ -6,6 +6,13 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Base64Coder;
 import com.badlogic.gdx.utils.Json;
+import com.yalla.flappy.AdHandler;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+
+import scenes.GamePlay;
 
 public class GameManager {
     private static final GameManager ourInstance = new GameManager();
@@ -21,6 +28,11 @@ public class GameManager {
     private int numOfGames = 0;
     private int numOfTotalGames;
     private int numOfPipes;
+    private AdHandler adHandler;
+    private boolean coinReward;
+    private boolean lifeReward;
+    private boolean firstDay;
+    GregorianCalendar calendarG = new GregorianCalendar();
 
     public void setNumOfTotalGames(int numOfTotalGames) {
         this.numOfTotalGames = numOfTotalGames;
@@ -36,7 +48,7 @@ public class GameManager {
         if (!fileHandle.exists()) {
             gameData = new GameData();
             gameData.setHighScore(0);
-            gameData.setCoins(15000);
+            gameData.setCoins(0);
             gameData.setUserCurrentLevel(1);
             gameData.setAllBirds(new boolean[8]);
             gameData.getAllBirds()[0] = true;
@@ -47,9 +59,14 @@ public class GameManager {
             gameData.setHasX2Coins(false);
             gameData.setHasFireOption(false);
             gameData.setHasHideOption(false);
+            calendarG.setTime(new Date());
+            gameData.setLastDayIn(Integer.valueOf(String.valueOf(calendarG.get(Calendar.DAY_OF_YEAR))));
+            firstDay = true;
+            gameData.setSoundOn(true);
             saveData();
         } else {
             loadData();
+            firstDay = false;
             birdIndex = gameData.getCurrentBird();
             numOfTotalGames = gameData.getNumOfTotalGames();
         }
@@ -182,9 +199,108 @@ public class GameManager {
         return birdIndex;
     }
 
+
+    public boolean isCoinReward() {
+        return coinReward;
+    }
+
+    public void setCoinReward(boolean coinReward) {
+        this.coinReward = coinReward;
+    }
+
+    public boolean isLifeReward() {
+        return lifeReward;
+    }
+
+    public void setLifeReward(boolean lifeReward) {
+        this.lifeReward = lifeReward;
+    }
+
     public void setBirdIndex(int birdIndex) {
         this.birdIndex = birdIndex;
     }
+
+
+    public AdHandler getAdHandler() {
+        return adHandler;
+    }
+
+    public void setAdHandler(AdHandler adHandler) {
+        this.adHandler = adHandler;
+    }
+
+    public void coinsReward() {
+        addCoins(25);
+        setCoinReward(true);
+    }
+
+    public void coinsReward1() {
+        addCoins(1);
+        setCoinReward(true);
+    }
+
+    public void extraLifeReward() {
+        setLifeReward(true);
+    }
+
+
+    public boolean isFirstDay() {
+        return firstDay;
+    }
+
+    public void setFirstDay(boolean firstDay) {
+        this.firstDay = firstDay;
+    }
+
+    public boolean dailyPrize() {
+        int today = Integer.valueOf((String.valueOf(calendarG.get(Calendar.DAY_OF_YEAR))));
+        int lastTime = gameData.getLastDayIn();
+        gameData.setLastDayIn(today);
+        saveData();
+        return (today == lastTime + 1);
+    }
+
+//    Preferences preferences=Gdx.app.getPreferences("MyPref");
+//    String LAST_LOGIN_DAY="lastloginday";
+//
+//    GregorianCalendar calendarG = new GregorianCalendar();
+//calendarG.setTime(new Date());
+//
+//
+//if(!preferences.contains(LAST_LOGIN_DAY)) {
+//        //first day in App
+//        preferences.putInteger(LAST_LOGIN_DAY, calendarG.get(Calendar.DAY_OF_YEAR));
+//        preferences.flush();
+//    }
+//
+//if(preferences.getInteger(LAST_LOGIN_DAY)-1==calendarG.get(Calendar.DAY_OF_YEAR)){
+//        //next loginday up to a year
+//
+//        updateValue(preferences,calendarG);
+//
+//    }else{
+//
+//        if(calendarG.get(Calendar.DAY_OF_YEAR)==1) {
+//
+//            // check for the 1st day of the year
+//
+//            boolean isLeap = calendarG.isLeapYear(calendarG.get(Calendar.YEAR));
+//            if (isLeap && preferences.getInteger(LAST_LOGIN_DAY)==366 ) {
+//
+//                updateValue(preferences,calendarG);
+//
+//            }else  if(preferences.getInteger(LAST_LOGIN_DAY)==365){
+//                updateValue(preferences,calendarG);
+//
+//            }
+//            else
+//                preferences.putInteger(LAST_LOGIN_DAY,calendarG.get(Calendar.DAY_OF_YEAR));
+//        }
+//        else
+//            preferences.putInteger(LAST_LOGIN_DAY,calendarG.get(Calendar.DAY_OF_YEAR));
+//
+//    }
+//
 
 
 }

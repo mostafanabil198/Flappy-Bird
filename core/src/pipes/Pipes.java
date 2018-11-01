@@ -52,8 +52,23 @@ public class Pipes {
             DISTANCE_BETWEEN_PIPES = 403f;
         } else if (GameManager.getInstance().getNumOfPipes() < 15) {
             DISTANCE_BETWEEN_PIPES = 398f;
+        } else if (GameManager.getInstance().getNumOfPipes() > 40) {
+            DISTANCE_BETWEEN_PIPES = 390f;
+
         } else {
             DISTANCE_BETWEEN_PIPES = 395f;
+        }
+
+        if (GameManager.getInstance().getNumOfPipes() < 5 && GameManager.getInstance().getBirdIndex() == 0) {
+            DISTANCE_BETWEEN_PIPES = 400f;
+        } else if (GameManager.getInstance().getNumOfPipes() < 10 && GameManager.getInstance().getBirdIndex() == 0) {
+            DISTANCE_BETWEEN_PIPES = 395f;
+        } else if (GameManager.getInstance().getNumOfPipes() < 15 && GameManager.getInstance().getBirdIndex() == 0) {
+            DISTANCE_BETWEEN_PIPES = 392f;
+        } else if (GameManager.getInstance().getNumOfPipes() >= 40 && GameManager.getInstance().getBirdIndex() == 0) {
+            DISTANCE_BETWEEN_PIPES = 382f;
+        } else if (GameManager.getInstance().getNumOfPipes() > 15 && GameManager.getInstance().getBirdIndex() == 0) {
+            DISTANCE_BETWEEN_PIPES = 387f;
         }
 
         pipe1 = new Sprite(new Texture("Pipes/Pipe 1.png"));
@@ -115,11 +130,11 @@ public class Pipes {
 
     void randomCollectable() {
         int r = rand.nextInt(150);
-        if ((r == 10 || r == 77 || r == 63 || r == 50 || r == 31 || r == 99 || r == 37) && numSpeed < 3) {
+        if ((r == 10 || r == 63 || r == 50 || r == 31 || r == 37) && numSpeed < 3) {
             colName = "Invisible";
         } else if (((r > 1 && r < 7) || (r > 120 && r < 130) || (r < 113 && r > 118) || (r > 22 && r < 31) || (r > 53 && r < 58) || (r > 89 && r < 97) || (r > 142 && r < 146) || (r < 67 && r < 69)) && numCoins < 40) {
             colName = "Coin";
-        } else if (r == 12 || r == 110 || r == 132 || r == 19) {
+        } else if (r == 12 || r == 110 || r == 132) {
             colName = "Fire";
         } else {
             colName = "";

@@ -1,5 +1,6 @@
 package scenes;
 
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.audio.Sound;
@@ -69,6 +70,8 @@ public class GamePlay implements Screen, ContactListener {
         this.winCoins = winCoins;
         this.isLevel = isLevel;
         this.currentLevel = currentlevel;
+        GameManager.getInstance().setInvisible(false);
+        GameManager.getInstance().setSpeed(false);
         mainCamera = new OrthographicCamera(GameInfo.WIDTH, GameInfo.HEIGHT);
         mainCamera.position.set(GameInfo.WIDTH / 2, GameInfo.HEIGHT / 2, 0);
         gameViewPort = new StretchViewport(GameInfo.WIDTH, GameInfo.HEIGHT, mainCamera);
@@ -84,16 +87,21 @@ public class GamePlay implements Screen, ContactListener {
         bird.setHasInvisible(false);
         groundBody = new GroundBody(world, grounds.get(0));
         hud = new UiHud(game, this, bird);
-        flyingSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Fly.mp3"));
-        scoreSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Score.mp3"));
-        tickSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Tick.mp3"));
-        dieSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Dead.mp3"));
+        if (GameManager.getInstance().getGameData().isSoundOn()) {
+            flyingSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Fly.mp3"));
+            scoreSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Score.mp3"));
+            tickSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Tick.mp3"));
+            dieSound = Gdx.audio.newSound(Gdx.files.internal("Flappy Bird Sounds/Dead.mp3"));
+        }
         tapToPlay = new Texture("Buttons/Touch To Start.png");
         collectables = new Array<Collectables>();
         GameManager.getInstance().setNumOfPipes(0);
         GameManager.getInstance().setNumOfGames(GameManager.getInstance().getNumOfGames() + 1);
         GameManager.getInstance().setNumOfTotalGames(GameManager.getInstance().getNumOfTotalGames() + 1);
         Gdx.input.setInputProcessor(hud.getStage());
+        if (GameManager.getInstance().getNumOfGames() % 4 == 3) {
+            GameManager.getInstance().getAdHandler().openVideo(3);
+        }
     }
 
     void inputHandle() {
@@ -102,7 +110,9 @@ public class GamePlay implements Screen, ContactListener {
         boolean b = x >= 70 && x <= 420 && y >= 1700 && y <= 1875;
         if (Gdx.input.justTouched() && !b) {
             bird.birdFlap();
-            flyingSound.play();
+            if (GameManager.getInstance().getGameData().isSoundOn()) {
+                flyingSound.play();
+            }
         }
     }
 
@@ -114,7 +124,9 @@ public class GamePlay implements Screen, ContactListener {
                 timeCount += dt;
                 if (timeCount >= 1) {
                     hud.setTime(hud.getTime() - 1);
-                    tickSound.play();
+                    if (GameManager.getInstance().getGameData().isSoundOn()) {
+                        tickSound.play();
+                    }
                     if (!bird.isHasSpeed()) {
                         hud.updateInvisibleTimeLbl();
                     } else {
@@ -133,9 +145,16 @@ public class GamePlay implements Screen, ContactListener {
             moveFires();
             removeFire();
             movePipe();
+            birdOutOfBounds();
         }
+        hud.extraLifeReward();
     }
 
+    void birdOutOfBounds() {
+        if (bird.getX() + bird.getWidth() / 2 <= 0) {
+            birdDied();
+        }
+    }
 
     public void createFire() {
         Fire f = new Fire(game, world, bird);
@@ -277,7 +296,9 @@ public class GamePlay implements Screen, ContactListener {
     void birdDied() {
         GameManager.getInstance().score = hud.getScore();
         bird.birdDied();
-        dieSound.play();
+        if (GameManager.getInstance().getGameData().isSoundOn()) {
+            dieSound.play();
+        }
         bird.setAlive(false);
         stopPipes();
 //Score
@@ -369,9 +390,11 @@ public class GamePlay implements Screen, ContactListener {
     @Override
     public void dispose() {
         world.dispose();
-        scoreSound.dispose();
-        dieSound.dispose();
-        flyingSound.dispose();
+        if (GameManager.getInstance().getGameData().isSoundOn()) {
+            scoreSound.dispose();
+            dieSound.dispose();
+            flyingSound.dispose();
+        }
         for (Sprite bg : bgs) {
             bg.getTexture().dispose();
         }
@@ -405,7 +428,9 @@ public class GamePlay implements Screen, ContactListener {
         }
         if (fix1.getUserData() == "Bird" && fix2.getUserData() == "Score" && bird.isAlive()) {
             hud.incrementScore();
-            scoreSound.play();
+            if (GameManager.getInstance().getGameData().isSoundOn()) {
+                scoreSound.play();
+            }
             if (isLevel && hud.getScore() == targetScore) {
                 finishLevel();
             }

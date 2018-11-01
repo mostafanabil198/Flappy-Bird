@@ -21,6 +21,8 @@ public class GameData {
     private boolean hasX2Coins;
     private boolean hasFireOption;
     private int numOfFireOption;
+    private int lastDayIn;
+    private boolean soundOn;
 
 
     public int getNumOfTotalGames() {
@@ -142,5 +144,22 @@ public class GameData {
         this.numOfFireOption = numOfFireOption;
     }
 
+
+    public boolean isSoundOn() {
+        return soundOn;
+    }
+
+    public void setSoundOn(boolean soundOn) {
+        this.soundOn = soundOn;
+    }
+
+
+    public int getLastDayIn() {
+        return lastDayIn;
+    }
+
+    public void setLastDayIn(int lastDayIn) {
+        this.lastDayIn = lastDayIn;
+    }
 
 }

@@ -13,12 +13,12 @@ import com.badlogic.gdx.utils.viewport.Viewport;
 import com.yalla.flappy.GameMain;
 
 import helpers.GameInfo;
+import helpers.GameManager;
 import hud.MainMenuButtons;
 
 public class MainMenu implements Screen {
 
     private GameMain game;
-    private Texture bg;
     private MainMenuButtons btns;
     private OrthographicCamera mainCamera;
     private Viewport gameViewport;
@@ -33,6 +33,10 @@ public class MainMenu implements Screen {
         createBackgrounds();
         btns = new MainMenuButtons(game);
         Gdx.input.setInputProcessor(btns.getStage());
+        if (GameManager.getInstance().isFirstDay() || GameManager.getInstance().dailyPrize()) {
+            btns.showGift();
+            GameManager.getInstance().setFirstDay(false);
+        }
 
 
     }
@@ -47,7 +51,7 @@ public class MainMenu implements Screen {
 
     void moveBackgrounds() {
         for (Sprite bg : bgs) {
-            float x1 = bg.getX() -1f;
+            float x1 = bg.getX() - 1f;
             bg.setPosition(x1, bg.getY());
             if (bg.getX() + bg.getWidth() / 2 + GameInfo.WIDTH < mainCamera.position.x) {
                 bg.setPosition(bg.getX() + bg.getWidth() * bgs.size, bg.getY());
@@ -69,6 +73,7 @@ public class MainMenu implements Screen {
     @Override
     public void render(float delta) {
         moveBackgrounds();
+        btns.updateCoinsLbl();
         Gdx.gl.glClearColor(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         game.getBatch().begin();
@@ -102,6 +107,10 @@ public class MainMenu implements Screen {
 
     @Override
     public void dispose() {
+        for (Sprite bg : bgs) {
+            bg.getTexture().dispose();
+        }
+
 
     }
 }

@@ -316,22 +316,31 @@ public class UiHud {
         reviveBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                GamePlay g = new GamePlay(game, gamePlay.isLevel(), gamePlay.getCurrentLevel(), gamePlay.getTargetScore(), gamePlay.getWinCoins());
-                game.setScreen(g);
-                stage.dispose();
-                g.getHud().setScore(--score);
-                g.getHud().incrementScore();
-                GameManager.getInstance().reviveCoin(coins);
-                g.getHud().setCoins(--coins);
-                g.getHud().incrementCoins();
-                GameManager.getInstance().setCanRevive(false);
+                GameManager.getInstance().getAdHandler().openVideo(2);
+
             }
         });
+
 
         stage.addActor(retryBtn);
         stage.addActor(menuBtn);
     }
 
+    public void extraLifeReward() {
+        if (GameManager.getInstance().isLifeReward()) {
+            GamePlay g = new GamePlay(game, gamePlay.isLevel(), gamePlay.getCurrentLevel(), gamePlay.getTargetScore(), gamePlay.getWinCoins());
+            game.setScreen(g);
+            stage.dispose();
+            g.getHud().setScore(--score);
+            g.getHud().incrementScore();
+            GameManager.getInstance().reviveCoin(coins);
+            g.getHud().setCoins(--coins);
+            g.getHud().incrementCoins();
+            GameManager.getInstance().setCanRevive(false);
+            GameManager.getInstance().setLifeReward(false);
+        }
+
+    }
 
     public void takeCollectables(final boolean speed, final boolean invisible) {
         final RunnableAction start = new RunnableAction();
@@ -345,8 +354,8 @@ public class UiHud {
                 gamePlay.makePipesSensors(speed || invisible);
                 parameter.size = 30;
                 font = generator.generateFont(parameter);
-                if (time != 5) {
-                    time += 5;
+                if (time != 10) {
+                    time += 10;
                 }
                 if (invisible) {
                     bird.createAnimation(" Inv");
@@ -390,7 +399,7 @@ public class UiHud {
                 bird.createAnimation("");
                 gamePlay.makePipesSensors(false);
                 if (time <= 1) {
-                    time = 5;
+                    time = 10;
                 }
                 if (speed) {
                     stage.getActors().removeValue(speedImg, true);
@@ -405,7 +414,7 @@ public class UiHud {
 
         SequenceAction sa = new SequenceAction();
         sa.addAction(start);
-        sa.addAction(Actions.delay(5));
+        sa.addAction(Actions.delay(10));
         sa.addAction(stop);
         stage.addAction(sa);
 
@@ -424,7 +433,7 @@ public class UiHud {
         SequenceAction sa = new SequenceAction();
         sa.addAction(run);
         sa.addAction(Actions.delay(.1f));
-        stage.addAction(Actions.repeat(20, sa));
+        stage.addAction(Actions.repeat(30, sa));
     }
 
 

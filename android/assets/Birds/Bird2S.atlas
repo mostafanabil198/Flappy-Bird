@@ -1,62 +1,20 @@
 
 Bird2S.png
-size: 512,64
+size: 128,64
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
-frame-1
+2
   rotate: false
   xy: 2, 2
-  size: 60, 41
-  orig: 60, 41
+  size: 61, 45
+  orig: 61, 45
   offset: 0, 0
   index: -1
-frame-2
+3
   rotate: false
-  xy: 64, 2
-  size: 60, 41
-  orig: 60, 41
-  offset: 0, 0
-  index: -1
-frame-3
-  rotate: false
-  xy: 126, 2
-  size: 60, 41
-  orig: 60, 41
-  offset: 0, 0
-  index: -1
-frame-4
-  rotate: false
-  xy: 188, 2
-  size: 60, 41
-  orig: 60, 41
-  offset: 0, 0
-  index: -1
-frame-5
-  rotate: false
-  xy: 250, 2
-  size: 60, 41
-  orig: 60, 41
-  offset: 0, 0
-  index: -1
-frame-6
-  rotate: false
-  xy: 312, 2
-  size: 60, 41
-  orig: 60, 41
-  offset: 0, 0
-  index: -1
-frame-7
-  rotate: false
-  xy: 374, 2
-  size: 60, 41
-  orig: 60, 41
-  offset: 0, 0
-  index: -1
-frame-8
-  rotate: false
-  xy: 436, 2
-  size: 60, 41
-  orig: 60, 41
+  xy: 65, 2
+  size: 60, 45
+  orig: 60, 45
   offset: 0, 0
   index: -1

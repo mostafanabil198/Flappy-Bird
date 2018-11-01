@@ -37,6 +37,7 @@ public class Bird extends Sprite {
         this.world = world;
         createBody();
         createAnimation("");
+
     }
 
     void createBody() {
@@ -60,7 +61,7 @@ public class Bird extends Sprite {
     }
 
     public void birdFlap() {
-        body.setLinearVelocity(0, 4.6f);
+        body.setLinearVelocity(0, 4.75f);
     }
 
     public void drawBirdIdle(SpriteBatch batch) {

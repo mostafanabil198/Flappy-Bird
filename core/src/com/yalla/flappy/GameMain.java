@@ -13,11 +13,17 @@ import scenes.MainMenu;
 
 public class GameMain extends Game {
     SpriteBatch batch;
+    AdHandler adHandler;
+
+    public GameMain(AdHandler adHandler) {
+        this.adHandler = adHandler;
+    }
 
     @Override
     public void create() {
         batch = new SpriteBatch();
         GameManager.getInstance().initializeGameData();
+        GameManager.getInstance().setAdHandler(adHandler);
         setScreen(new MainMenu(this));
     }
 

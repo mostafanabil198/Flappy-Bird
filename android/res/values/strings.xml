@@ -1,6 +1,22 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+    Google Play game services IDs.
+    Save this file as res/values/games-ids.xml in your project.
+    -->
 <resources>
-
+    <!-- app_id -->
+    <string name="app_id" translatable="false">818500871773</string>
+    <!-- app id AdMob -->
+    <string name="app_id_admob" translatable="false">ca-app-pub-2204069511670732~4021708863</string>
+    <!-- package_name -->
+    <string name="package_name" translatable="false">mustan.flappy.bird</string>
+    <!-- leaderboard HIGH SCORE -->
+    <string name="leaderboard_high_score" translatable="false">CgkI3czQk-kXEAIQAA</string>
+    <!-- App Name -->
     <string name="app_name">Flappy Bird</string>
-
+    <!-- AdMob Banner Id -->
+    <string name="admob_banner">ca-app-pub-2204069511670732/7456738602</string>
+    <!-- AdMob Video Id -->
+    <string name="admob_videoId">ca-app-pub-2204069511670732/6665405267</string>
+    <!-- AdMob Video unit Id -->
+    <string name="admob_video_unitID">ca-app-pub-2204069511670732/6665405267</string>
 </resources>

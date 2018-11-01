@@ -111,6 +111,8 @@ public class Market implements Screen {
                             GameManager.getInstance().saveData();
                             game.setScreen(new Market(game));
                             stage.dispose();
+                        } else {
+                            GameManager.getInstance().getAdHandler().toast("cant buy");
                         }
                     }
                 });
@@ -130,6 +132,8 @@ public class Market implements Screen {
                             GameManager.getInstance().getGameData().getMyBirds().add(a);
                             game.setScreen(new Market(game));
                             stage.dispose();
+                        } else {
+                            GameManager.getInstance().getAdHandler().toast("cant buy");
                         }
                     }
                 });
@@ -165,17 +169,27 @@ public class Market implements Screen {
                         GameManager.getInstance().saveData();
                         game.setScreen(new Market(game));
                         stage.dispose();
+                    } else {
+                        GameManager.getInstance().getAdHandler().toast("cant buy");
                     }
                 }
             });
             x2CoinsBtn.setPosition(355, 55);
-            x2CoinsLbl = new Label("500", new Label.LabelStyle(font, Color.WHITE));
+            x2CoinsLbl = new Label("750", new Label.LabelStyle(font, Color.WHITE));
             x2CoinsLbl.setPosition(370, 70);
 
             x2CoinsLbl.addListener(new ClickListener() {
                 @Override
                 public void clicked(InputEvent event, float x, float y) {
-
+                    if (GameManager.getInstance().getGameData().getCoins() >= 750) {
+                        GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 750);
+                        GameManager.getInstance().getGameData().setHasX2Coins(true);
+                        GameManager.getInstance().saveData();
+                        game.setScreen(new Market(game));
+                        stage.dispose();
+                    } else {
+                        GameManager.getInstance().getAdHandler().toast("cant buy");
+                    }
 
                 }
             });
@@ -187,13 +201,15 @@ public class Market implements Screen {
         hideBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (GameManager.getInstance().getGameData().getCoins() >= 500) {
-                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 500);
+                if (GameManager.getInstance().getGameData().getCoins() >= 200) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 200);
                     GameManager.getInstance().getGameData().setHasHideOption(true);
                     GameManager.getInstance().getGameData().setNumOfHideOption(GameManager.getInstance().getGameData().getNumOfHideOption() + 1);
                     GameManager.getInstance().saveData();
                     game.setScreen(new Market(game));
                     stage.dispose();
+                } else {
+                    GameManager.getInstance().getAdHandler().toast("cant buy");
                 }
             }
         });
@@ -201,21 +217,23 @@ public class Market implements Screen {
         firesBtn.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if (GameManager.getInstance().getGameData().getCoins() >= 500) {
-                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 500);
+                if (GameManager.getInstance().getGameData().getCoins() >= 200) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 200);
                     GameManager.getInstance().getGameData().setHasFireOption(true);
                     GameManager.getInstance().getGameData().setNumOfFireOption(GameManager.getInstance().getGameData().getNumOfFireOption() + 1);
                     GameManager.getInstance().saveData();
                     game.setScreen(new Market(game));
                     stage.dispose();
+                } else {
+                    GameManager.getInstance().getAdHandler().toast("cant buy");
                 }
             }
         });
         hideBtn.setPosition(50, 55);
         firesBtn.setPosition(205, 55);
 
-        hideLbl = new Label("250", new Label.LabelStyle(font, Color.WHITE));
-        fireLbl = new Label("250", new Label.LabelStyle(font, Color.WHITE));
+        hideLbl = new Label("200", new Label.LabelStyle(font, Color.WHITE));
+        fireLbl = new Label("200", new Label.LabelStyle(font, Color.WHITE));
 
         hideLbl.setPosition(65, 70);
         fireLbl.setPosition(220, 70);
@@ -223,13 +241,15 @@ public class Market implements Screen {
         hideLbl.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (GameManager.getInstance().getGameData().getCoins() >= 250) {
-                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 250);
+                if (GameManager.getInstance().getGameData().getCoins() >= 200) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 200);
                     GameManager.getInstance().getGameData().setHasHideOption(true);
                     GameManager.getInstance().getGameData().setNumOfHideOption(GameManager.getInstance().getGameData().getNumOfHideOption() + 1);
                     GameManager.getInstance().saveData();
                     game.setScreen(new Market(game));
                     stage.dispose();
+                } else {
+                    GameManager.getInstance().getAdHandler().toast("cant buy");
                 }
 
             }
@@ -238,13 +258,15 @@ public class Market implements Screen {
         fireLbl.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                if (GameManager.getInstance().getGameData().getCoins() >= 250) {
-                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 250);
+                if (GameManager.getInstance().getGameData().getCoins() >= 200) {
+                    GameManager.getInstance().getGameData().setCoins(GameManager.getInstance().getGameData().getCoins() - 200);
                     GameManager.getInstance().getGameData().setHasFireOption(true);
                     GameManager.getInstance().getGameData().setNumOfFireOption(GameManager.getInstance().getGameData().getNumOfFireOption() + 1);
                     GameManager.getInstance().saveData();
                     game.setScreen(new Market(game));
                     stage.dispose();
+                } else {
+                    GameManager.getInstance().getAdHandler().toast("cant buy");
                 }
 
             }
